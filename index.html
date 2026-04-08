@@ -18,7 +18,6 @@
 
         body { font-family: 'Cairo', sans-serif; background: var(--bg-page); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
 
-        /* ترويسة جديدة: اسم يمين - شعار وسط - مدرسة يسار */
         .user-header {
             width: 100%; max-width: 850px; background: white; border-radius: 15px; padding: 20px;
             display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
@@ -42,6 +41,12 @@
         }
 
         .question-card::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: var(--royal-blue); }
+
+        /* تنسيق رقم السؤال */
+        .q-number-badge {
+            background: var(--royal-blue); color: white; padding: 2px 15px; border-radius: 50px;
+            font-weight: 900; font-size: 0.9rem; margin-left: 10px; display: inline-block;
+        }
 
         .type-label { font-size: 0.85rem; font-weight: 900; color: #3b82f6; background: #eff6ff; padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; display: inline-block; }
         .type-select { background: #f1f5f9; border: none; padding: 8px; border-radius: 10px; font-weight: 700; margin-bottom: 15px; font-family: 'Cairo'; cursor: pointer; }
@@ -103,6 +108,14 @@
             'irtibat': 'الارتباط والاختلاف'
         };
 
+        function updateQuestionNumbers() {
+            const cards = document.querySelectorAll('.question-card');
+            cards.forEach((card, index) => {
+                const badge = card.querySelector('.q-number-badge');
+                if (badge) badge.innerText = `السؤال ${index + 1}`;
+            });
+        }
+
         function addQuestion(data = null) {
             const container = document.getElementById('quiz-content');
             const card = document.createElement('div');
@@ -111,9 +124,12 @@
 
             card.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <select class="type-select" onchange="toggleType(this)">
-                        ${Object.keys(typeMap).map(k => `<option value="${k}" ${type === k ? 'selected' : ''}>${typeMap[k]}</option>`).join('')}
-                    </select>
+                    <div>
+                        <span class="q-number-badge">السؤال</span>
+                        <select class="type-select" onchange="toggleType(this)">
+                            ${Object.keys(typeMap).map(k => `<option value="${k}" ${type === k ? 'selected' : ''}>${typeMap[k]}</option>`).join('')}
+                        </select>
+                    </div>
                     <i class="fas fa-times-circle remove-btn" onclick="removeQuestion(this)"></i>
                 </div>
                 <div class="q-area">${renderQArea(type, data)}</div>
@@ -123,6 +139,7 @@
                 </div>
             `;
             container.appendChild(card);
+            updateQuestionNumbers();
             saveAll();
         }
 
@@ -159,7 +176,11 @@
             saveAll();
         }
 
-        function removeQuestion(btn) { btn.closest('.question-card').remove(); saveAll(); }
+        function removeQuestion(btn) { 
+            btn.closest('.question-card').remove(); 
+            updateQuestionNumbers();
+            saveAll(); 
+        }
 
         function saveAll() {
             const questions = [];
@@ -177,17 +198,16 @@
                 }
                 questions.push(qData);
             });
-            localStorage.setItem('fifi_v11_final', JSON.stringify(questions));
+            localStorage.setItem('fifi_v12_final', JSON.stringify(questions));
         }
 
         function loadQuestions() {
-            const saved = localStorage.getItem('fifi_v11_final');
+            const saved = localStorage.getItem('fifi_v12_final');
             if (saved) JSON.parse(saved).forEach(q => addQuestion(q));
         }
 
         function clearAll() { if(confirm("مسح الكل؟")) { localStorage.clear(); location.reload(); } }
 
-        // وظيفة حفظ الصور: كل 3 أسئلة في صورة مستقلة
         async function saveAsImages() {
             const originalCards = Array.from(document.querySelectorAll('.question-card'));
             if (originalCards.length === 0) return;
@@ -195,23 +215,22 @@
             for (let i = 0; i < originalCards.length; i += 3) {
                 const captureArea = document.createElement('div');
                 captureArea.style.width = "850px"; captureArea.style.padding = "25px"; captureArea.style.background = "#f8fafc";
-                
                 captureArea.appendChild(document.getElementById('main-header').cloneNode(true));
                 
                 const cardsGroup = originalCards.slice(i, i + 3);
-                cardsGroup.forEach((originalCard) => {
+                cardsGroup.forEach((originalCard, localIdx) => {
                     const cardClone = originalCard.cloneNode(true);
+                    const globalIdx = i + localIdx + 1;
                     const type = originalCard.querySelector('.type-select').value;
                     
-                    const label = document.createElement('div');
-                    label.className = "type-label"; label.innerText = typeMap[type];
-                    cardClone.prepend(label);
+                    const labelWrap = document.createElement('div');
+                    labelWrap.style.marginBottom = "10px";
+                    labelWrap.innerHTML = `<span class="q-number-badge">السؤال ${globalIdx}</span><span class="type-label">${typeMap[type]}</span>`;
+                    cardClone.prepend(labelWrap);
 
-                    // معالجة التناظر اللفظي لضمان ظهور النص
                     if(type === 'tanazor') {
                         const row = cardClone.querySelector('.pair-row');
                         row.innerHTML = `<div style="display:flex; justify-content:center; align-items:center; width:100%; font-weight:900; font-size:1.5rem; color:var(--q-red);"><span>${originalCard.querySelector('.t2').value}</span><span style="margin:0 10px;"> : </span><span>${originalCard.querySelector('.t1').value}</span></div>`;
-                        
                         cardClone.querySelectorAll('.opt-pair-row').forEach((optRow, optIdx) => {
                             const op1 = originalCard.querySelectorAll('.op1')[optIdx].value;
                             const op2 = originalCard.querySelectorAll('.op2')[optIdx].value;
@@ -232,7 +251,10 @@
                             input.replaceWith(textSpan);
                         });
                     }
-                    cardClone.querySelectorAll('.remove-btn, .type-select').forEach(el => el.remove());
+                    cardClone.querySelectorAll('.remove-btn, .type-select, .q-number-badge').forEach(el => {
+                        if(!el.parentElement.classList.contains('question-card')) return; // لا تحذف البادج الجديد
+                        el.remove();
+                    });
                     captureArea.appendChild(cardClone);
                 });
 
@@ -260,10 +282,16 @@
                 for (let j = i; j < i + 3 && j < cards.length; j++) {
                     const clone = cards[j].cloneNode(true);
                     const type = cards[j].querySelector('.type-select').value;
-                    const label = document.createElement('div');
-                    label.className = "type-label"; label.innerText = typeMap[type];
-                    clone.prepend(label);
-                    clone.querySelector('.type-select').remove(); clone.querySelector('.remove-btn').remove();
+                    
+                    const labelWrap = document.createElement('div');
+                    labelWrap.style.marginBottom = "10px";
+                    labelWrap.innerHTML = `<span class="q-number-badge">السؤال ${j+1}</span><span class="type-label">${typeMap[type]}</span>`;
+                    clone.prepend(labelWrap);
+
+                    clone.querySelectorAll('.type-select, .remove-btn, .q-number-badge').forEach(el => {
+                        if(!el.parentElement.classList.contains('question-card')) return;
+                        el.remove();
+                    });
                     
                     if(type === 'tanazor') {
                         clone.querySelector('.pair-row').innerHTML = `<div style="display:flex; justify-content:center; align-items:center; width:100%; font-weight:900; font-size:1.4rem; color:var(--q-red);"><span>${cards[j].querySelector('.t2').value}</span><span style="margin:0 10px;"> : </span><span>${cards[j].querySelector('.t1').value}</span></div>`;
