@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة أ. عبدالعزيز الفيفي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --q-red: #e63946;
+            --ans-black: #000000;
+            --bg-page: #f9fafb;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-page);
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* ترويسة الصفحة - النصوص في اليمين والأيقونة في اليسار */
+        .user-header {
+            width: 100%; max-width: 850px;
+            margin-bottom: 30px;
+            display: flex; 
+            flex-direction: row-reverse; /* عكس الاتجاه لتكون النصوص يميناً */
+            justify-content: space-between; 
+            align-items: center;
+            border-bottom: 4px solid var(--primary-blue);
+            padding: 15px 25px;
+            background: #fff; border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+        }
+
+        .header-info { text-align: right; }
+        .header-info h2 { margin: 0; color: var(--primary-blue); font-weight: 900; font-size: 1.8rem; }
+        .header-info p { margin: 5px 0 0; color: #555; font-weight: 700; font-size: 1.1rem; }
+
+        .edu-icon-container { flex-shrink: 0; }
+
+        /* حاوية الأسئلة */
+        .container { width: 100%; max-width: 850px; }
+
+        /* بطاقة السؤال */
+        .question-card {
+            background: white; border-radius: 20px; padding: 30px; margin-bottom: 25px;
+            border: 2px solid #e5e7eb; position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+            page-break-inside: avoid !important; /* منع انقسام السؤال الواحد */
+            display: block;
+            text-align: right; /* ضمان الكتابة في اليمين */
+        }
+
+        .question-card::before {
+            content: ""; position: absolute; right: 0; top: 0; bottom: 0;
+            width: 10px; background: var(--primary-blue); border-radius: 0 20px 20px 0;
+        }
+
+        .card-title {
+            color: var(--q-red); font-weight: 900; font-size: 1.3rem;
+            margin-bottom: 15px; display: flex; align-items: center; gap: 10px;
+            justify-content: flex-start; /* الأيقونة بجانب النص في اليمين */
+        }
+
+        .q-text-input {
+            width: 100%; padding: 18px; border: 2.5px solid #ffccd5;
+            border-radius: 12px; color: var(--q-red); font-weight: 900;
+            font-size: 1.2rem; background: #fff; margin-bottom: 20px;
+            font-family: 'Cairo', sans-serif; box-sizing: border-box;
+            text-align: right;
+        }
+
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        .opt-input {
+            width: 100%; padding: 14px; border: 1.5px solid #d1d5db;
+            border-radius: 10px; color: var(--ans-black); font-weight: 900;
+            font-size: 1.1rem; background: #fff; box-sizing: border-box;
+            text-align: right;
+        }
+
+        /* أزرار التحكم */
+        .controls {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 15px; z-index: 1000;
+            background: rgba(255,255,255,0.98); padding: 15px 35px; border-radius: 60px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2); backdrop-filter: blur(10px);
+        }
+
+        .btn {
+            border: none; padding: 14px 28px; border-radius: 35px;
+            font-weight: 900; cursor: pointer; display: flex; align-items: center; gap: 10px;
+            transition: 0.3s; font-size: 1rem;
+        }
+
+        .btn-add { background: var(--primary-blue); color: white; }
+        .btn-pdf { background: var(--q-red); color: white; }
+        .btn-clear { background: #374151; color: white; }
+
+        .remove-btn { color: #ddd; cursor: pointer; font-size: 1.5rem; }
+
+        /* خاصية الفاصل بعد كل 3 أسئلة في الطباعة فقط */
+        .page-divider { display: none; }
+
+        @media print {
+            .page-divider { display: block; page-break-after: always; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="user-header" id="pdf-header">
+        <div class="header-info">
+            <h2>أ. عبدالعزيز الفيفي</h2>
+            <p> 😉 ثانوية الأمير عبدالمجيد </p>
+        </div>
+        <div class="edu-icon-container">
+            <i class="fas fa-graduation-cap fa-4x" style="color: var(--primary-blue);"></i>
+        </div>
+    </div>
+
+    <div class="container" id="quiz-content"></div>
+
+    <div class="controls">
+        <button class="btn btn-add" onclick="addQuestion()">
+            <i class="fas fa-plus-circle"></i> إضافة سؤال
+        </button>
+        <button class="btn btn-pdf" id="pdfBtn" style="display: none;" onclick="saveAsPDF()">
+            <i class="fas fa-file-pdf"></i> حفظ PDF
+        </button>
+        <button class="btn btn-clear" onclick="clearAll()">
+            <i class="fas fa-trash"></i> مسح
+        </button>
+    </div>
+
+    <script>
+        window.onload = loadQuestions;
+
+        function addQuestion(data = null) {
+            const container = document.getElementById('quiz-content');
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px">
+                    <div class="card-title"><i class="fas fa-question-circle"></i> السؤال الجديد:</div>
+                    <i class="fas fa-times-circle remove-btn" onclick="removeQuestion(this)"></i>
+                </div>
+                <input type="text" placeholder="اكتب السؤال هنا..." class="q-text-input" value="${data ? data.text : ''}" oninput="saveAll()">
+                
+                <div style="margin-bottom:12px; font-weight:700; color:#555;">الخيارات المتاحة:</div>
+                <div class="options-grid">
+                    <input type="text" placeholder="خيار أ" class="opt-input" value="${data ? data.opts[0] : ''}" oninput="saveAll()">
+                    <input type="text" placeholder="خيار ب" class="opt-input" value="${data ? data.opts[1] : ''}" oninput="saveAll()">
+                    <input type="text" placeholder="خيار ج" class="opt-input" value="${data ? data.opts[2] : ''}" oninput="saveAll()">
+                    <input type="text" placeholder="خيار د" class="opt-input" value="${data ? data.opts[3] : ''}" oninput="saveAll()">
+                </div>
+                
+                <div style="margin-top:25px; padding-top:15px; border-top: 1px dashed #eee;">
+                    <label style="color:#059669; font-weight:900; display:block; margin-bottom:8px">الإجابة الصحيحة:</label>
+                    <input type="text" placeholder="حدد الإجابة..." class="opt-input" style="border: 2px solid #059669;" value="${data ? data.ans : ''}" oninput="saveAll()">
+                </div>
+            `;
+            container.appendChild(card);
+            updateUI();
+            saveAll();
+        }
+
+        function removeQuestion(btn) {
+            btn.closest('.question-card').remove();
+            saveAll();
+            updateUI();
+        }
+
+        function saveAll() {
+            const questions = [];
+            document.querySelectorAll('.question-card').forEach(card => {
+                const inputs = card.querySelectorAll('input');
+                questions.push({
+                    text: inputs[0].value,
+                    opts: [inputs[1].value, inputs[2].value, inputs[3].value, inputs[4].value],
+                    ans: inputs[5].value
+                });
+            });
+            localStorage.setItem('fifi_v5_data', JSON.stringify(questions));
+        }
+
+        function loadQuestions() {
+            const saved = localStorage.getItem('fifi_v5_data');
+            if (saved) {
+                const questions = JSON.parse(saved);
+                questions.forEach(q => addQuestion(q));
+            }
+            updateUI();
+        }
+
+        function updateUI() {
+            const count = document.querySelectorAll('.question-card').length;
+            document.getElementById('pdfBtn').style.display = count > 0 ? 'flex' : 'none';
+        }
+
+        function clearAll() {
+            if(confirm("مسح الكل؟")) {
+                localStorage.removeItem('fifi_v5_data');
+                document.getElementById('quiz-content').innerHTML = '';
+                updateUI();
+            }
+        }
+
+        function saveAsPDF() {
+            const element = document.createElement('div');
+            element.style.padding = "5px";
+            
+            const headerOriginal = document.getElementById('pdf-header').cloneNode(true);
+            element.appendChild(headerOriginal);
+
+            const originalCards = document.querySelectorAll('.question-card');
+            
+            originalCards.forEach((card, index) => {
+                const cardClone = card.cloneNode(true);
+                cardClone.querySelectorAll('.remove-btn').forEach(b => b.remove());
+                element.appendChild(cardClone);
+
+                // --- منطق الفاصل: بعد كل 3 أسئلة نضع فاصل صفحة ---
+                // نضع فاصل إذا كان الترتيب (3, 6, 9...) وليس السؤال الأخير
+                if ((index + 1) % 3 === 0 && (index + 1) < originalCards.length) {
+                    const divider = document.createElement('div');
+                    divider.style.pageBreakAfter = "always";
+                    element.appendChild(divider);
+                    
+                    // اختيارياً: إعادة وضع الترويسة في بداية كل صفحة جديدة
+                    const headerRepeat = document.getElementById('pdf-header').cloneNode(true);
+                    element.appendChild(headerRepeat);
+                }
+            });
+
+            const opt = {
+                margin: [10, 5, 10, 5],
+                filename: 'اختبار_أ_عبدالعزيز_الفيفي.pdf',
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: 'css' } 
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+</html>
+
