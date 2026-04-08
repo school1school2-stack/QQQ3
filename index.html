@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة أ. عبدالعزيز الفيفي - القدرات الشاملة</title>
+    <title>منصة أ. عبدالعزيز الفيفي - القدرات</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -19,15 +19,20 @@
 
         body { font-family: 'Cairo', sans-serif; background-color: var(--bg-page); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
 
+        /* حل مشكلة تداخل الأيقونات في الترويسة */
         .user-header {
             width: 100%; max-width: 850px; margin-bottom: 30px;
-            display: flex; flex-direction: row-reverse; justify-content: space-between; align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             border-bottom: 4px solid var(--primary-blue); padding: 15px 25px;
             background: #fff; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-sizing: border-box;
         }
 
-        .header-info h2 { margin: 0; color: var(--primary-blue); font-weight: 900; }
+        .header-info { text-align: right; flex-grow: 1; }
+        .header-info h2 { margin: 0; color: var(--primary-blue); font-weight: 900; font-size: 1.7rem; }
         .header-info p { margin: 5px 0 0; color: #555; font-weight: 700; }
+
+        .edu-icon-container { flex-shrink: 0; margin-left: 20px; }
 
         .container { width: 100%; max-width: 850px; }
 
@@ -47,25 +52,33 @@
             margin-bottom: 15px; font-family: 'Cairo'; font-weight: bold; background: #f8f9fa;
         }
 
-        /* تنسيق التناظر اللفظي */
-        .tanazor-row {
+        /* تنسيق التناظر اللفظي (السؤال والخيارات) */
+        .pair-row {
             display: flex; align-items: center; justify-content: center;
-            gap: 15px; margin-bottom: 20px; background: #fff5f5;
-            padding: 15px; border-radius: 12px; border: 2px solid #ffccd5;
+            gap: 10px; margin-bottom: 10px; background: #fff5f5;
+            padding: 10px; border-radius: 12px; border: 2px solid #ffccd5;
         }
 
-        .tanazor-word {
-            width: 40%; text-align: center; padding: 10px;
-            border: none; border-bottom: 3px solid var(--q-red);
-            color: var(--q-red); font-weight: 900; font-size: 1.4rem;
+        .pair-word {
+            width: 45%; text-align: center; padding: 8px;
+            border: none; border-bottom: 2px solid var(--q-red);
+            color: var(--q-red); font-weight: 900; font-size: 1.2rem;
             background: transparent; outline: none;
         }
 
-        /* تنسيق استيعاب المقروء (النص الطويل) */
+        .opt-pair-row {
+            display: flex; align-items: center; justify-content: center;
+            gap: 5px; background: #fff; padding: 5px; border: 1.5px solid #d1d5db; border-radius: 10px;
+        }
+
+        .opt-word {
+            width: 45%; text-align: center; border: none; font-weight: 900; 
+            color: var(--ans-black); font-size: 1rem; outline: none; background: transparent;
+        }
+
         .estieab-textarea {
-            width: 100%; height: 120px; padding: 15px; border: 2px solid #3b82f6;
-            border-radius: 12px; font-family: 'Cairo'; font-size: 1rem; line-height: 1.6;
-            margin-bottom: 15px; background: #f0f7ff; resize: vertical;
+            width: 100%; height: 100px; padding: 12px; border: 2px solid #3b82f6;
+            border-radius: 12px; font-family: 'Cairo'; margin-bottom: 15px; background: #f0f7ff;
         }
 
         .q-text-input {
@@ -75,17 +88,11 @@
         }
 
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .opt-input {
-            width: 100%; padding: 12px; border: 1.5px solid #d1d5db;
-            border-radius: 10px; color: var(--ans-black); font-weight: 900;
-            font-size: 1.1rem; text-align: right;
-        }
 
         .correct-ans-box { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ddd; }
         .correct-input {
             width: 100%; padding: 10px; border: 2px solid var(--success-green);
-            border-radius: 10px; color: var(--success-green); font-weight: 900;
-            text-align: right; font-family: 'Cairo';
+            border-radius: 10px; color: var(--success-green); font-weight: 900; text-align: right;
         }
 
         .controls {
@@ -98,10 +105,9 @@
         .btn-add { background: var(--primary-blue); color: white; }
         .btn-pdf { background: var(--q-red); color: white; }
 
-        .remove-btn { color: #ddd; cursor: pointer; font-size: 1.3rem; }
+        .remove-btn { color: #ddd; cursor: pointer; font-size: 1.3rem; transition: 0.2s; }
         .remove-btn:hover { color: var(--q-red); }
 
-        @media print { .pdf-page-break { page-break-after: always; } }
     </style>
 </head>
 <body>
@@ -129,7 +135,6 @@
             const container = document.getElementById('quiz-content');
             const card = document.createElement('div');
             card.className = 'question-card';
-            
             const type = data ? data.type : 'normal';
 
             card.innerHTML = `
@@ -137,9 +142,8 @@
                     <select class="type-select" onchange="toggleType(this)">
                         <option value="normal" ${type === 'normal' ? 'selected' : ''}>سؤال عادي / إكمال جمل</option>
                         <option value="tanazor" ${type === 'tanazor' ? 'selected' : ''}>تناظر لفظي ( : )</option>
-                        <option value="estieab" ${type === 'estieab' ? 'selected' : ''}>استيعاب المقروء (قطعة)</option>
+                        <option value="estieab" ${type === 'estieab' ? 'selected' : ''}>استيعاب المقروء</option>
                         <option value="khata" ${type === 'khata' ? 'selected' : ''}>خطأ سياقي</option>
-                        <option value="shaza" ${type === 'shaza' ? 'selected' : ''}>المفردة الشاذة</option>
                     </select>
                     <i class="fas fa-times-circle remove-btn" onclick="removeQuestion(this)"></i>
                 </div>
@@ -149,15 +153,11 @@
                 </div>
 
                 <div class="options-grid">
-                    <input type="text" placeholder="أ" class="opt-input opt" value="${data ? (data.opts?.[0] || '') : ''}" oninput="saveAll()">
-                    <input type="text" placeholder="ب" class="opt-input opt" value="${data ? (data.opts?.[1] || '') : ''}" oninput="saveAll()">
-                    <input type="text" placeholder="ج" class="opt-input opt" value="${data ? (data.opts?.[2] || '') : ''}" oninput="saveAll()">
-                    <input type="text" placeholder="د" class="opt-input opt" value="${data ? (data.opts?.[3] || '') : ''}" oninput="saveAll()">
+                    ${renderOptions(type, data)}
                 </div>
 
                 <div class="correct-ans-box">
-                    <label style="color:var(--success-green); font-weight:900; font-size:0.9rem">الإجابة الصحيحة:</label>
-                    <input type="text" placeholder="اكتب الحل هنا..." class="correct-input ans-val" value="${data ? (data.ans || '') : ''}" oninput="saveAll()">
+                    <input type="text" placeholder="الإجابة الصحيحة..." class="correct-input ans-val" value="${data ? (data.ans || '') : ''}" oninput="saveAll()">
                 </div>
             `;
             container.appendChild(card);
@@ -168,26 +168,46 @@
         function renderQArea(type, data) {
             if (type === 'tanazor') {
                 return `
-                    <div class="tanazor-row">
-                        <input type="text" placeholder="الكلمة الثانية" class="tanazor-word t2" value="${data ? data.text2 : ''}" oninput="saveAll()">
-                        <span style="font-weight:900; font-size:1.8rem; color:red">:</span>
-                        <input type="text" placeholder="الكلمة الأولى" class="tanazor-word t1" value="${data ? data.text1 : ''}" oninput="saveAll()">
+                    <div class="pair-row">
+                        <input type="text" placeholder="الكلمة 2" class="pair-word t2" value="${data ? data.text2 : ''}" oninput="saveAll()">
+                        <span style="font-weight:900; color:red">:</span>
+                        <input type="text" placeholder="الكلمة 1" class="pair-word t1" value="${data ? data.text1 : ''}" oninput="saveAll()">
                     </div>`;
             } else if (type === 'estieab') {
                 return `
-                    <label style="font-weight:bold; color:var(--primary-blue)">نص القطعة:</label>
-                    <textarea class="estieab-textarea t-area" placeholder="أدخل نص القطعة هنا..." oninput="saveAll()">${data ? data.text_area : ''}</textarea>
-                    <input type="text" placeholder="سؤال حول القطعة..." class="q-text-input q-main" value="${data ? data.text : ''}" oninput="saveAll()">
-                `;
+                    <textarea class="estieab-textarea t-area" placeholder="نص القطعة..." oninput="saveAll()">${data ? data.text_area : ''}</textarea>
+                    <input type="text" placeholder="السؤال..." class="q-text-input q-main" value="${data ? data.text : ''}" oninput="saveAll()">`;
             } else {
-                return `<input type="text" placeholder="اكتب نص السؤال هنا..." class="q-text-input q-main" value="${data ? data.text : ''}" oninput="saveAll()">`;
+                return `<input type="text" placeholder="نص السؤال..." class="q-text-input q-main" value="${data ? data.text : ''}" oninput="saveAll()">`;
             }
+        }
+
+        function renderOptions(type, data) {
+            let html = '';
+            const labels = ['أ', 'ب', 'ج', 'د'];
+            for (let i = 0; i < 4; i++) {
+                if (type === 'tanazor') {
+                    const val1 = data && data.opt_pairs ? data.opt_pairs[i][0] : '';
+                    const val2 = data && data.opt_pairs ? data.opt_pairs[i][1] : '';
+                    html += `
+                        <div class="opt-pair-row">
+                            <span style="font-weight:bold; margin-left:5px">${labels[i]})</span>
+                            <input type="text" placeholder="2" class="opt-word op2" value="${val2}" oninput="saveAll()">
+                            <span style="font-weight:900; color:red">:</span>
+                            <input type="text" placeholder="1" class="opt-word op1" value="${val1}" oninput="saveAll()">
+                        </div>`;
+                } else {
+                    const val = data && data.opts ? data.opts[i] : '';
+                    html += `<input type="text" placeholder="${labels[i]}" class="opt-input opt" value="${val}" oninput="saveAll()">`;
+                }
+            }
+            return html;
         }
 
         function toggleType(select) {
             const card = select.closest('.question-card');
-            const qArea = card.querySelector('.q-area');
-            qArea.innerHTML = renderQArea(select.value, null);
+            card.querySelector('.q-area').innerHTML = renderQArea(select.value, null);
+            card.querySelector('.options-grid').innerHTML = renderOptions(select.value, null);
             saveAll();
         }
 
@@ -197,76 +217,52 @@
             const questions = [];
             document.querySelectorAll('.question-card').forEach(card => {
                 const type = card.querySelector('.type-select').value;
-                const opts = Array.from(card.querySelectorAll('.opt')).map(i => i.value);
                 const ans = card.querySelector('.ans-val').value;
-                let qData = { type, opts, ans };
+                let qData = { type, ans };
                 if (type === 'tanazor') {
                     qData.text1 = card.querySelector('.t1').value;
                     qData.text2 = card.querySelector('.t2').value;
-                } else if (type === 'estieab') {
-                    qData.text_area = card.querySelector('.t-area').value;
-                    qData.text = card.querySelector('.q-main').value;
+                    qData.opt_pairs = Array.from(card.querySelectorAll('.opt-pair-row')).map(row => [row.querySelector('.op1').value, row.querySelector('.op2').value]);
                 } else {
-                    qData.text = card.querySelector('.q-main').value;
+                    qData.text = card.querySelector('.q-main')?.value || "";
+                    if(type === 'estieab') qData.text_area = card.querySelector('.t-area').value;
+                    qData.opts = Array.from(card.querySelectorAll('.opt')).map(i => i.value);
                 }
                 questions.push(qData);
             });
-            localStorage.setItem('fifi_qudurat_ultimate', JSON.stringify(questions));
+            localStorage.setItem('fifi_qudurat_final_v2', JSON.stringify(questions));
         }
 
         function loadQuestions() {
-            const saved = localStorage.getItem('fifi_qudurat_ultimate');
+            const saved = localStorage.getItem('fifi_qudurat_final_v2');
             if (saved) JSON.parse(saved).forEach(q => addQuestion(q));
             updateUI();
         }
 
-        function updateUI() {
-            document.getElementById('pdfBtn').style.display = document.querySelectorAll('.question-card').length > 0 ? 'flex' : 'none';
-        }
+        function updateUI() { document.getElementById('pdfBtn').style.display = document.querySelectorAll('.question-card').length > 0 ? 'flex' : 'none'; }
 
-        function clearAll() { if(confirm("حذف كل الأسئلة؟")) { localStorage.removeItem('fifi_qudurat_ultimate'); location.reload(); } }
+        function clearAll() { if(confirm("حذف كل الأسئلة؟")) { localStorage.removeItem('fifi_qudurat_final_v2'); location.reload(); } }
 
         function saveAsPDF() {
             const mainContainer = document.createElement('div');
             const cards = Array.from(document.querySelectorAll('.question-card'));
-
             for (let i = 0; i < cards.length; i += 3) {
                 const page = document.createElement('div');
                 page.style.padding = "10px";
                 page.appendChild(document.getElementById('pdf-header').cloneNode(true));
-                
                 for (let j = i; j < i + 3 && j < cards.length; j++) {
                     const clone = cards[j].cloneNode(true);
-                    clone.querySelector('.type-select').style.display = 'none';
-                    clone.querySelector('.remove-btn').style.display = 'none';
-                    
-                    // تحسين ظهور التكست أريا في الـ PDF
-                    const textarea = clone.querySelector('.estieab-textarea');
-                    if(textarea) {
-                        const textVal = textarea.value;
-                        const div = document.createElement('div');
-                        div.className = "estieab-textarea";
-                        div.style.height = "auto";
-                        div.innerText = textVal;
-                        textarea.replaceWith(div);
-                    }
-                    
+                    clone.querySelector('.type-select').remove();
+                    clone.querySelector('.remove-btn').remove();
+                    // تحويل التكست أريا لنص ثابت في PDF
+                    const txt = clone.querySelector('textarea');
+                    if(txt) { const div = document.createElement('div'); div.innerText = txt.value; div.className="estieab-textarea"; div.style.height="auto"; txt.replaceWith(div); }
                     page.appendChild(clone);
                 }
                 mainContainer.appendChild(page);
-                if (i + 3 < cards.length) {
-                    const pb = document.createElement('div');
-                    pb.style.pageBreakAfter = "always";
-                    mainContainer.appendChild(pb);
-                }
+                if (i + 3 < cards.length) { const pb = document.createElement('div'); pb.style.pageBreakAfter = "always"; mainContainer.appendChild(pb); }
             }
-
-            html2pdf().set({
-                margin: 5, filename: 'اختبار_قدرات_شامل_الفيفي.pdf',
-                image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            }).from(mainContainer).save();
+            html2pdf().set({ margin: 5, filename: 'قدرات_الفيفي.pdf', image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(mainContainer).save();
         }
     </script>
 </body>
