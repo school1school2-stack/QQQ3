@@ -19,84 +19,81 @@
 
         /* الترويسة الملكية */
         .user-header {
-            width: 100%; max-width: 900px; background: white; border-radius: 20px; padding: 20px 40px;
-            display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            border-bottom: 5px solid #3b82f6; margin-bottom: 40px; box-sizing: border-box;
+            width: 100%; max-width: 850px; background: white; border-radius: 15px; padding: 15px 30px;
+            display: flex; justify-content: space-between; align-items: center; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-bottom: 5px solid #3b82f6; 
+            margin-bottom: 30px; box-sizing: border-box;
         }
 
-        .header-info { text-align: right; }
-        .header-info h2 { margin: 0; background: var(--royal-blue); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; font-size: 2rem; }
-        .header-info p { margin: 5px 0 0; color: #64748b; font-weight: 800; font-size: 1.2rem; }
+        .header-info h2 { margin: 0; background: var(--royal-blue); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; font-size: 1.8rem; }
+        .header-info p { margin: 5px 0 0; color: #64748b; font-weight: 700; font-size: 1rem; }
 
-        .container { width: 100%; max-width: 900px; }
+        .container { width: 100%; max-width: 850px; }
 
         /* بطاقة السؤال */
         .question-card {
-            background: white; border-radius: 24px; padding: 30px; margin-bottom: 30px;
-            border: 2px solid #e2e8f0; position: relative; page-break-inside: avoid !important;
-            text-align: right; box-sizing: border-box;
+            background: white; border-radius: 20px; padding: 25px; margin-bottom: 20px;
+            border: 1px solid #e2e8f0; position: relative; page-break-inside: avoid !important;
+            text-align: right; box-sizing: border-box; overflow: hidden;
         }
 
-        .type-select { background: #f1f5f9; border: none; padding: 10px; border-radius: 12px; font-weight: 700; margin-bottom: 20px; font-family: 'Cairo'; cursor: pointer; }
+        .question-card::before {
+            content: ""; position: absolute; right: 0; top: 0; bottom: 0;
+            width: 8px; background: var(--royal-blue);
+        }
+
+        .type-select { background: #f1f5f9; border: none; padding: 8px; border-radius: 10px; font-weight: 700; margin-bottom: 15px; font-family: 'Cairo'; cursor: pointer; }
+
+        /* استيعاب المقروء */
+        .estieab-box { 
+            background: #fff9c4 !important; border: 2px solid #fbc02d; border-radius: 12px; 
+            padding: 15px; margin-bottom: 15px; color: #000; font-weight: 700; 
+            font-size: 1.05rem; line-height: 1.7; width: 100%; box-sizing: border-box;
+        }
+
+        .q-text-input { 
+            width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; 
+            color: var(--q-red); font-weight: 900; font-size: 1.3rem; 
+            margin-bottom: 15px; outline: none; text-align: right; box-sizing: border-box;
+        }
+
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .opt-pair-row { display: flex; align-items: center; background: white; border: 1.5px solid #d1d5db; border-radius: 10px; padding: 8px; }
+        .opt-word { width: 100%; border: none; outline: none; font-weight: 900; color: #000; background: transparent; text-align: right; font-family: 'Cairo'; }
 
         /* التناظر اللفظي */
-        .pair-row { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 20px 0; background: #fff1f2; padding: 20px; border-radius: 18px; border: 2px dashed #fca5a5; }
-        .pair-word { width: 40%; text-align: center; border: none; background: white; padding: 12px; border-radius: 12px; color: var(--q-red); font-weight: 900; font-size: 1.5rem; outline: none; }
+        .pair-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; background: #fff1f2; padding: 15px; border-radius: 12px; border: 1.5px dashed #fca5a5; }
+        .pair-word { width: 45%; text-align: center; border: none; background: white; padding: 10px; border-radius: 8px; color: var(--q-red); font-weight: 900; font-size: 1.3rem; }
 
-        /* استيعاب المقروء - محاذاة يمين */
-        .estieab-box { 
-            background: #fff9c4 !important; border: 2px solid #fbc02d; border-radius: 15px; 
-            padding: 20px; margin-bottom: 15px; color: #000; font-weight: 700; 
-            font-size: 1.1rem; line-height: 1.8; width: 100%; box-sizing: border-box;
-            text-align: right; 
-        }
+        .correct-ans-box { margin-top: 15px; padding: 10px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0; }
+        .correct-input { width: 100%; background: transparent; border: none; outline: none; color: #166534; font-weight: 900; text-align: right; }
 
-        /* خط السؤال سميك جداً */
-        .q-text-input { 
-            width: 100%; padding: 18px; border: 2px solid #e2e8f0; border-radius: 15px; 
-            color: var(--q-red); font-weight: 900; font-size: 1.4rem; 
-            margin-bottom: 20px; outline: none; text-align: right; box-sizing: border-box;
-        }
-
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-
-        /* النقطتان في الخيارات */
-        .opt-pair-row { display: flex; align-items: center; justify-content: space-around; background: white; border: 2px solid #e2e8f0; border-radius: 15px; padding: 10px; }
-        .opt-word { width: 40%; text-align: center; border: none; outline: none; font-weight: 900; font-size: 1.1rem; color: #000; background: transparent; }
-
-        .correct-ans-box { margin-top: 20px; padding: 15px; background: #f0fdf4; border-radius: 15px; border: 1px solid #bbf7d0; text-align: right; }
-        .correct-input { width: 100%; background: transparent; border: none; outline: none; color: #166534; font-weight: 900; font-size: 1.1rem; text-align: right; }
-
-        /* التحكم السفلي */
-        .controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; z-index: 1000; background: rgba(30, 41, 59, 0.9); padding: 15px 40px; border-radius: 100px; backdrop-filter: blur(10px); }
-        .btn { border: none; padding: 12px 25px; border-radius: 50px; font-weight: 800; cursor: pointer; color: white; display: flex; align-items: center; gap: 10px; transition: 0.3s; font-family: 'Cairo'; }
-        .btn-add { background: var(--royal-blue); }
-        .btn-pdf { background: #dc2626; }
-        .btn:hover { transform: scale(1.05); }
-
-        .remove-btn { color: #cbd5e1; cursor: pointer; font-size: 1.5rem; transition: 0.3s; }
-        .remove-btn:hover { color: var(--q-red); }
-
-        @media (max-width: 600px) { .options-grid { grid-template-columns: 1fr; } .user-header { flex-direction: row; padding: 15px; } }
+        /* التحكم */
+        .controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 1000; background: rgba(30, 41, 59, 0.95); padding: 12px 30px; border-radius: 50px; backdrop-filter: blur(10px); }
+        .btn { border: none; padding: 10px 20px; border-radius: 30px; font-weight: 800; cursor: pointer; color: white; display: flex; align-items: center; gap: 8px; transition: 0.3s; font-family: 'Cairo'; }
+        .btn-add { background: #3b82f6; }
+        .btn-pdf { background: #ef4444; }
+        .remove-btn { color: #cbd5e1; cursor: pointer; font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
     <div class="user-header" id="pdf-header">
-        <div style="background: var(--royal-blue); width: 70px; height: 70px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+        <div style="background: var(--royal-blue); width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
             <i class="fas fa-award"></i>
         </div>
         <div class="header-info">
             <h2>أ. عبدالعزيز الفيفي</h2>
-            <p> 😉 ثانوية الأمير عبدالمجيد </p>
+            <p>😉 ثانوية الأمير عبدالمجيد</p>
         </div>
     </div>
 
     <div class="container" id="quiz-content"></div>
 
     <div class="controls">
-        <button class="btn btn-add" onclick="addQuestion()"><i class="fas fa-plus-circle"></i> إضافة سؤال</button>
-        <button class="btn btn-pdf" id="pdfBtn" style="display: none;" onclick="saveAsPDF()"><i class="fas fa-file-export"></i> تصدير PDF</button>
+        <button class="btn btn-add" onclick="addQuestion()"><i class="fas fa-plus"></i> إضافة سؤال</button>
+        <button class="btn btn-pdf" onclick="saveAsPDF()"><i class="fas fa-file-pdf"></i> تصدير PDF</button>
         <button class="btn" style="background:#64748b" onclick="clearAll()"><i class="fas fa-trash"></i> مسح</button>
     </div>
 
@@ -123,26 +120,18 @@
                 <div class="q-area">${renderQArea(type, data)}</div>
                 <div class="options-grid">${renderOptions(type, data)}</div>
                 <div class="correct-ans-box">
-                    <input type="text" placeholder="الإجابة الصحيحة النموذجية..." class="correct-input ans-val" value="${data ? (data.ans || '') : ''}" oninput="saveAll()">
+                    <input type="text" placeholder="الإجابة الصحيحة..." class="correct-input ans-val" value="${data ? (data.ans || '') : ''}" oninput="saveAll()">
                 </div>
             `;
             container.appendChild(card);
-            updateUI();
             saveAll();
         }
 
         function renderQArea(type, data) {
             if (type === 'tanazor') {
-                return `
-                    <div class="pair-row">
-                        <input type="text" placeholder="كلمة 2" class="pair-word t2" value="${data ? data.text2 : ''}" oninput="saveAll()">
-                        <span style="color:red; font-weight:900; font-size:2rem">:</span>
-                        <input type="text" placeholder="كلمة 1" class="pair-word t1" value="${data ? data.text1 : ''}" oninput="saveAll()">
-                    </div>`;
+                return `<div class="pair-row"><input type="text" placeholder="2" class="pair-word t2" value="${data ? data.text2 : ''}" oninput="saveAll()"><span style="color:red; font-weight:900; font-size:1.5rem">:</span><input type="text" placeholder="1" class="pair-word t1" value="${data ? data.text1 : ''}" oninput="saveAll()"></div>`;
             } else if (type === 'estieab') {
-                return `
-                    <textarea class="estieab-box t-area" style="height:120px; width:100%; font-family:Cairo; resize:none;" placeholder="أدخل نص القطعة هنا..." oninput="saveAll()">${data ? data.text_area : ''}</textarea>
-                    <input type="text" placeholder="السؤال حول النص..." class="q-text-input q-main" value="${data ? data.text : ''}" oninput="saveAll()">`;
+                return `<textarea class="estieab-box t-area" style="height:100px; width:100%; font-family:Cairo; resize:none;" placeholder="نص القطعة..." oninput="saveAll()">${data ? data.text_area : ''}</textarea><input type="text" placeholder="السؤال..." class="q-text-input q-main" value="${data ? data.text : ''}" oninput="saveAll()">`;
             } else {
                 return `<input type="text" placeholder="اكتب السؤال هنا..." class="q-text-input q-main" value="${data ? data.text : ''}" oninput="saveAll()">`;
             }
@@ -155,16 +144,10 @@
                 if (type === 'tanazor') {
                     const v1 = data?.opt_pairs ? data.opt_pairs[i][0] : '';
                     const v2 = data?.opt_pairs ? data.opt_pairs[i][1] : '';
-                    html += `
-                        <div class="opt-pair-row">
-                            <span style="font-weight:bold">${labels[i]}</span>
-                            <input type="text" placeholder="2" class="opt-word op2" value="${v2}" oninput="saveAll()">
-                            <span style="color:red; font-weight:900">:</span>
-                            <input type="text" placeholder="1" class="opt-word op1" value="${v1}" oninput="saveAll()">
-                        </div>`;
+                    html += `<div class="opt-pair-row"><span>${labels[i]}</span><input type="text" class="opt-word op2" value="${v2}" oninput="saveAll()"><span style="color:red; font-weight:900">:</span><input type="text" class="opt-word op1" value="${v1}" oninput="saveAll()"></div>`;
                 } else {
                     const val = data?.opts ? data.opts[i] : '';
-                    html += `<div class="opt-pair-row" style="justify-content:flex-start; gap:10px"><span>${labels[i]}</span><input type="text" placeholder="الخيار..." class="opt-word opt" style="width:90%; text-align:right" value="${val}" oninput="saveAll()"></div>`;
+                    html += `<div class="opt-pair-row"><span>${labels[i]}</span><input type="text" class="opt-word opt" style="margin-right:10px" value="${val}" oninput="saveAll()"></div>`;
                 }
             }
             return html;
@@ -177,7 +160,7 @@
             saveAll();
         }
 
-        function removeQuestion(btn) { btn.closest('.question-card').remove(); saveAll(); updateUI(); }
+        function removeQuestion(btn) { btn.closest('.question-card').remove(); saveAll(); }
 
         function saveAll() {
             const questions = [];
@@ -195,70 +178,62 @@
                 }
                 questions.push(qData);
             });
-            localStorage.setItem('fifi_v5_final', JSON.stringify(questions));
+            localStorage.setItem('fifi_v6_save', JSON.stringify(questions));
         }
 
         function loadQuestions() {
-            const saved = localStorage.getItem('fifi_v5_final');
+            const saved = localStorage.getItem('fifi_v6_save');
             if (saved) JSON.parse(saved).forEach(q => addQuestion(q));
-            updateUI();
         }
 
-        function updateUI() { document.getElementById('pdfBtn').style.display = document.querySelectorAll('.question-card').length > 0 ? 'flex' : 'none'; }
-
-        function clearAll() { if(confirm("مسح كل الأسئلة؟")) { localStorage.clear(); location.reload(); } }
+        function clearAll() { if(confirm("مسح الكل؟")) { localStorage.clear(); location.reload(); } }
 
         function saveAsPDF() {
-            const mainContainer = document.createElement('div');
+            const pdfContent = document.createElement('div');
             const cards = Array.from(document.querySelectorAll('.question-card'));
             
-            // تقسيم الأسئلة: كل 3 في صفحة واحدة
             for (let i = 0; i < cards.length; i += 3) {
                 const page = document.createElement('div');
-                page.style.padding = "20px";
-                page.style.minHeight = "290mm"; // ضمان طول الصفحة
+                page.style.width = "210mm";
+                page.style.height = "297mm";
+                page.style.padding = "15mm";
+                page.style.boxSizing = "border-box";
+                page.style.background = "white";
+                page.style.position = "relative";
                 
-                // إضافة الترويسة لكل صفحة
+                // إضافة الترويسة
                 const headerClone = document.getElementById('pdf-header').cloneNode(true);
+                headerClone.style.marginBottom = "20px";
                 page.appendChild(headerClone);
                 
-                // إضافة الأسئلة الثلاثة
+                // إضافة 3 أسئلة فقط
                 for (let j = i; j < i + 3 && j < cards.length; j++) {
                     const clone = cards[j].cloneNode(true);
                     clone.querySelector('.type-select').remove();
                     clone.querySelector('.remove-btn').remove();
+                    clone.style.marginBottom = "15px";
                     
-                    // تحويل التكست أريا لنص ثابت لضمان الوضوح في PDF
-                    const txt = clone.querySelector('textarea');
-                    if(txt) { 
-                        const div = document.createElement('div'); 
-                        div.innerText = txt.value; 
-                        div.className="estieab-box"; 
-                        div.style.height="auto"; 
-                        txt.replaceWith(div); 
+                    const textarea = clone.querySelector('textarea');
+                    if(textarea) {
+                        const div = document.createElement('div');
+                        div.innerText = textarea.value;
+                        div.className = "estieab-box";
+                        div.style.height = "auto";
+                        textarea.replaceWith(div);
                     }
                     page.appendChild(clone);
                 }
-                
-                mainContainer.appendChild(page);
-                
-                // إضافة فاصل صفحة إذا لم يكن هذا آخر مجموعة
-                if (i + 3 < cards.length) {
-                    const pb = document.createElement('div');
-                    pb.style.pageBreakAfter = "always";
-                    mainContainer.appendChild(pb);
-                }
+                pdfContent.appendChild(page);
             }
-            
+
             const opt = {
                 margin: 0,
-                filename: 'اختبار_قدرات_الفيفي.pdf',
+                filename: 'اختبار_الفيفي.pdf',
                 image: { type: 'jpeg', quality: 1 },
                 html2canvas: { scale: 2, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
-            
-            html2pdf().set(opt).from(mainContainer).save();
+            html2pdf().set(opt).from(pdfContent).save();
         }
     </script>
 </body>
