@@ -3,68 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة أ. عبدالعزيز الفيفي - القدرات السحابية</title>
+    <title>منصة أ. عبدالعزيز الفيفي - السحابية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <style>
-        :root {
-            --royal-blue: #1e3a8a;
-            --q-red: #ef4444;
-            --bg-page: #f8fafc;
-        }
-
+        :root { --royal-blue: #1e3a8a; --q-red: #ef4444; --bg-page: #f8fafc; }
         body { font-family: 'Cairo', sans-serif; background: var(--bg-page); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
 
-        /* ترويسة متوازنة: اسم يمين - شعار وسط - مدرسة يسار */
         .user-header {
             width: 100%; max-width: 850px; background: white; border-radius: 15px; padding: 20px;
             display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-bottom: 5px solid #3b82f6; 
             margin-bottom: 30px; box-sizing: border-box;
         }
-        .header-right { text-align: right; }
-        .header-left { text-align: left; }
+        .header-right { text-align: right; } .header-left { text-align: left; }
         .user-name { margin: 0; color: var(--royal-blue); font-weight: 900; font-size: 1.5rem; }
         .school-name { margin: 0; color: #64748b; font-weight: 700; font-size: 1rem; }
         .logo-box { background: var(--royal-blue); width: 55px; height: 55px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; }
 
         .container { width: 100%; max-width: 850px; }
-
-        /* بطاقة السؤال */
-        .question-card {
-            background: white; border-radius: 20px; padding: 25px; margin-bottom: 25px;
-            border: 2px solid #e2e8f0; position: relative; text-align: right; box-sizing: border-box; overflow: hidden;
-        }
+        .question-card { background: white; border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 2px solid #e2e8f0; position: relative; text-align: right; box-sizing: border-box; overflow: hidden; }
         .question-card::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: var(--royal-blue); }
 
-        /* الترقيم ونوع السؤال */
         .card-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .q-number-badge { background: var(--royal-blue); color: white; padding: 2px 15px; border-radius: 50px; font-weight: 900; font-size: 0.9rem; }
         .type-label { font-size: 0.85rem; font-weight: 900; color: #3b82f6; background: #eff6ff; padding: 4px 12px; border-radius: 20px; }
         .type-select { background: #f1f5f9; border: none; padding: 8px; border-radius: 10px; font-weight: 700; font-family: 'Cairo'; cursor: pointer; }
 
-        /* استيعاب المقروء */
-        .estieab-box { background: #fff9c4 !important; border: 2px solid #fbc02d; border-radius: 12px; padding: 15px; margin-bottom: 15px; color: #000; font-weight: 700; line-height: 1.7; width: 100%; box-sizing: border-box; text-align: right; display: block; }
-
-        /* النصوص والمدخلات */
+        .estieab-box { background: #fff9c4 !important; border: 2px solid #fbc02d; border-radius: 12px; padding: 15px; margin-bottom: 15px; color: #000; font-weight: 700; line-height: 1.7; width: 100%; box-sizing: border-box; text-align: right; }
         .q-text-input { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; color: var(--q-red); font-weight: 900; font-size: 1.3rem; margin-bottom: 15px; outline: none; text-align: right; box-sizing: border-box; }
+        
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .opt-pair-row { display: flex; align-items: center; background: white; border: 1.5px solid #d1d5db; border-radius: 10px; padding: 8px; box-sizing: border-box; }
         .opt-word { width: 100%; border: none; outline: none; font-weight: 900; color: #000; background: transparent; text-align: right; font-family: 'Cairo'; }
 
-        /* التناظر اللفظي */
         .pair-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; background: #fff1f2; padding: 15px; border-radius: 12px; border: 1.5px dashed #fca5a5; width: 100%; box-sizing: border-box; }
         .pair-word { width: 45%; text-align: center; border: none; background: white; padding: 10px; border-radius: 8px; color: var(--q-red); font-weight: 900; font-size: 1.3rem; }
 
         .correct-ans-box { margin-top: 15px; padding: 10px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0; box-sizing: border-box; text-align: right; }
         .correct-input { width: 100%; background: transparent; border: none; outline: none; color: #166534; font-weight: 900; text-align: right; font-family: 'Cairo'; }
 
-        /* أزرار التحكم السفلية */
         .controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 1000; background: rgba(30, 41, 59, 0.95); padding: 10px 20px; border-radius: 50px; backdrop-filter: blur(10px); width: max-content; }
         .btn { border: none; padding: 8px 15px; border-radius: 30px; font-weight: 800; cursor: pointer; color: white; display: flex; align-items: center; gap: 5px; transition: 0.3s; font-family: 'Cairo'; font-size: 0.85rem; }
         .btn-cloud { background: #8b5cf6; } .btn-add { background: #3b82f6; } .btn-pdf { background: #ef4444; } .btn-img { background: #10b981; }
@@ -91,22 +75,17 @@
     </div>
 
     <script>
-        const typeMap = { 
-            'normal': 'إكمال جمل / خطأ سياقي', 
-            'tanazor': 'تناظر لفظي ( : )', 
-            'estieab': 'استيعاب المقروء', 
-            'shaza': 'المفردة الشاذة', 
-            'irtibat': 'الارتباط والاختلاف' 
-        };
+        const typeMap = { 'normal': 'إكمال جمل / خطأ سياقي', 'tanazor': 'تناظر لفظي ( : )', 'estieab': 'استيعاب المقروء', 'shaza': 'المفردة الشاذة', 'irtibat': 'الارتباط والاختلاف' };
 
-        // --- إعدادات Firebase (يجب تعبئتها من قبلك) ---
+        // --- إعدادات Firebase المحدثة من صورتك ---
         const firebaseConfig = {
-            apiKey: "ضع_API_KEY_الخاص_بك_هنا",
+            apiKey: "AIzaSyAVrIim7aXjg0hGrMk0qVrXT8geRIpHoBk",
             authDomain: "youy-apps.firebaseapp.com",
             databaseURL: "https://youy-apps-default-rtdb.firebaseio.com",
             projectId: "youy-apps",
-            storageBucket: "youy-apps.appspot.com",
-            appId: "ضع_APP_ID_الخاص_بك_هنا"
+            storageBucket: "youy-apps.firebasestorage.app",
+            messagingSenderId: "690543747528",
+            appId: "1:690543747528:web:10c85ef8c93b79596620fd"
         };
         
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
@@ -129,17 +108,12 @@
 
             card.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div class="card-meta">
-                        <span class="q-number-badge"></span>
-                        <select class="type-select" onchange="toggleType(this)">
-                            ${Object.keys(typeMap).map(k => `<option value="${k}" ${type === k ? 'selected' : ''}>${typeMap[k]}</option>`).join('')}
-                        </select>
-                    </div>
+                    <div class="card-meta"><span class="q-number-badge"></span><select class="type-select" onchange="toggleType(this)">${Object.keys(typeMap).map(k=>`<option value="${k}" ${type===k?'selected':''}>${typeMap[k]}</option>`).join('')}</select></div>
                     <i class="fas fa-times-circle remove-btn" onclick="removeQuestion(this)"></i>
                 </div>
                 <div class="q-area">${renderQArea(type, data)}</div>
                 <div class="options-grid">${renderOptions(type, data)}</div>
-                <div class="correct-ans-box"><input type="text" placeholder="الإجابة النموذجية..." class="correct-input ans-val" value="${data ? data.ans || '' : ''}" oninput="saveAll()"></div>
+                <div class="correct-ans-box"><input type="text" placeholder="الإجابة النموذجية..." class="correct-input ans-val" value="${data?data.ans||'':''}" oninput="saveAll()"></div>
             `;
             container.appendChild(card);
             updateNumbers();
@@ -153,16 +127,15 @@
         }
 
         function renderOptions(t, d) {
-            let h = ''; const l = ['أ','ب','ج','د'];
+            let h = ''; const labels = ['أ','ب','ج','د'];
             for(let i=0; i<4; i++) {
-                if(t==='tanazor') h+=`<div class="opt-pair-row"><span>${l[i]}</span><input type="text" class="opt-word op2" value="${d?.opt_pairs?.[i][1]||''}" oninput="saveAll()"><span style="color:red; font-weight:900"> : </span><input type="text" class="opt-word op1" value="${d?.opt_pairs?.[i][0]||''}" oninput="saveAll()"></div>`;
-                else h+=`<div class="opt-pair-row"><span>${l[i]}</span><input type="text" class="opt-word opt" style="margin-right:10px" value="${d?.opts?.[i]||''}" oninput="saveAll()"></div>`;
+                if(t==='tanazor') h+=`<div class="opt-pair-row"><span>${labels[i]}</span><input type="text" class="opt-word op2" value="${d?.opt_pairs?.[i][1]||''}" oninput="saveAll()"><span style="color:red; font-weight:900"> : </span><input type="text" class="opt-word op1" value="${d?.opt_pairs?.[i][0]||''}" oninput="saveAll()"></div>`;
+                else h+=`<div class="opt-pair-row"><span>${labels[i]}</span><input type="text" class="opt-word opt" style="margin-right:10px" value="${d?.opts?.[i]||''}" oninput="saveAll()"></div>`;
             }
             return h;
         }
 
         function toggleType(s) { const c = s.closest('.question-card'); c.querySelector('.q-area').innerHTML = renderQArea(s.value,null); c.querySelector('.options-grid').innerHTML = renderOptions(s.value,null); saveAll(); }
-        
         function removeQuestion(b) { b.closest('.question-card').remove(); updateNumbers(); saveAll(); }
 
         function collectData() {
@@ -172,8 +145,7 @@
                 const a = c.querySelector('.ans-val').value;
                 let d = { type: t, ans: a };
                 if (t === 'tanazor') { 
-                    d.text1 = c.querySelector('.t1').value; 
-                    d.text2 = c.querySelector('.t2').value; 
+                    d.text1 = c.querySelector('.t1').value; d.text2 = c.querySelector('.t2').value; 
                     d.opt_pairs = Array.from(c.querySelectorAll('.opt-pair-row')).map(r => [r.querySelector('.op1').value, r.querySelector('.op2').value]); 
                 } else { 
                     d.text = c.querySelector('.q-main')?.value || ""; 
@@ -185,29 +157,27 @@
             return qs;
         }
 
-        function saveAll() { localStorage.setItem('fifi_v15_cloud', JSON.stringify(collectData())); }
-        function loadQuestions() { const s = localStorage.getItem('fifi_v15_cloud'); if(s) JSON.parse(s).forEach(q=>addQuestion(q)); }
+        function saveAll() { localStorage.setItem('fifi_v16_cloud', JSON.stringify(collectData())); }
+        function loadQuestions() { const s = localStorage.getItem('fifi_v16_cloud'); if(s) JSON.parse(s).forEach(q=>addQuestion(q)); }
         function clearAll() { if(confirm("مسح الكل؟")) { localStorage.clear(); location.reload(); } }
 
-        // --- وظائف السحابة ---
         async function saveToCloud() {
             const name = prompt("أدخل اسماً لهذا النموذج لحفظه سحابياً:");
             if (!name) return;
             try {
                 await db.ref('models/' + name).set({ teacher: "أ. عبدالعزيز الفيفي", data: collectData(), date: new Date().toLocaleString() });
                 alert("تم الحفظ في سحابة الفيفي بنجاح! ✅");
-            } catch (e) { alert("تأكد من وضع بيانات الـ Config الصحيحة وقواعد الأمان في Firebase!"); }
+            } catch (e) { alert("تأكد من تفعيل قواعد الأمان في Firebase!"); }
         }
 
         function loadFromCloud() {
             db.ref('models').once('value', s => {
                 const ms = s.val(); if(!ms) return alert("السحابة فارغة!");
                 const n = Object.keys(ms); const c = prompt("اختر النموذج المرفوع:\n" + n.join("\n"));
-                if (c && ms[c]) { localStorage.setItem('fifi_v15_cloud', JSON.stringify(ms[c].data)); location.reload(); }
+                if (c && ms[c]) { localStorage.setItem('fifi_v16_cloud', JSON.stringify(ms[c].data)); location.reload(); }
             });
         }
 
-        // --- وظائف التصدير ---
         async function saveAsImages() {
             const cards = Array.from(document.querySelectorAll('.question-card'));
             for (let i = 0; i < cards.length; i += 3) {
@@ -217,14 +187,11 @@
                 cards.slice(i, i+3).forEach((orig, idx) => {
                     const clone = orig.cloneNode(true);
                     const type = orig.querySelector('.type-select').value;
-                    const meta = clone.querySelector('.card-meta');
-                    meta.innerHTML = `<span class="q-number-badge">السؤال ${i+idx+1}</span><span class="type-label">${typeMap[type]}</span>`;
-                    
+                    clone.querySelector('.card-meta').innerHTML = `<span class="q-number-badge">السؤال ${i+idx+1}</span><span class="type-label">${typeMap[type]}</span>`;
                     if(type === 'tanazor') {
                         clone.querySelector('.pair-row').innerHTML = `<div style="display:flex; justify-content:center; align-items:center; width:100%; font-weight:900; font-size:1.5rem; color:var(--q-red);"><span>${orig.querySelector('.t2').value}</span><span style="margin:0 10px;"> : </span><span>${orig.querySelector('.t1').value}</span></div>`;
                         clone.querySelectorAll('.opt-pair-row').forEach((r, oIdx) => {
-                            const op1 = orig.querySelectorAll('.op1')[oIdx].value;
-                            const op2 = orig.querySelectorAll('.op2')[oIdx].value;
+                            const op1 = orig.querySelectorAll('.op1')[oIdx].value; const op2 = orig.querySelectorAll('.op2')[oIdx].value;
                             r.innerHTML = `<span style="margin-left:10px;">${r.querySelector('span').innerText}</span> <div style="display:flex; justify-content:center; width:100%; font-weight:900;"><span>${op2}</span><span style="margin:0 5px;"> : </span><span>${op1}</span></div>`;
                         });
                     } else {
@@ -255,11 +222,9 @@
                 page.appendChild(document.getElementById('main-header').cloneNode(true));
                 cards.slice(i, i+3).forEach((orig, idx) => {
                     const clone = orig.cloneNode(true);
-                    const type = orig.querySelector('.type-select').value;
-                    clone.querySelector('.card-meta').innerHTML = `<span class="q-number-badge">السؤال ${i+idx+1}</span><span class="type-label">${typeMap[type]}</span>`;
+                    clone.querySelector('.card-meta').innerHTML = `<span class="q-number-badge">السؤال ${i+idx+1}</span><span class="type-label">${typeMap[orig.querySelector('.type-select').value]}</span>`;
                     clone.querySelectorAll('.remove-btn, .type-select').forEach(e => e.remove());
-                    
-                    if(type === 'tanazor') {
+                    if(orig.querySelector('.type-select').value === 'tanazor') {
                         clone.querySelector('.pair-row').innerHTML = `<div style="display:flex; justify-content:center; align-items:center; width:100%; font-weight:900; font-size:1.4rem; color:var(--q-red);"><span>${orig.querySelector('.t2').value}</span><span style="margin:0 10px;"> : </span><span>${orig.querySelector('.t1').value}</span></div>`;
                         clone.querySelectorAll('.opt-pair-row').forEach((r, oIdx) => {
                             r.innerHTML = `<span style="margin-left:10px;">${r.querySelector('span').innerText}</span> <div style="display:flex; justify-content:center; width:100%; font-weight:900;"><span>${orig.querySelectorAll('.op2')[oIdx].value}</span><span style="margin:0 5px;"> : </span><span>${orig.querySelectorAll('.op1')[oIdx].value}</span></div>`;
