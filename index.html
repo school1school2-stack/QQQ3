@@ -13,30 +13,28 @@
             --primary-blue: #2563eb;
             --q-red: #e63946;
             --ans-black: #000000;
+            --success-green: #059669;
             --bg-page: #f0f2f5;
         }
 
         body { font-family: 'Cairo', sans-serif; background-color: var(--bg-page); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
 
-        /* الترويسة */
         .user-header {
             width: 100%; max-width: 850px; margin-bottom: 30px;
             display: flex; flex-direction: row-reverse; justify-content: space-between; align-items: center;
             border-bottom: 4px solid var(--primary-blue); padding: 15px 25px;
-            background: #fff; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); box-sizing: border-box;
+            background: #fff; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
-        .header-info { text-align: right; }
         .header-info h2 { margin: 0; color: var(--primary-blue); font-weight: 900; }
         .header-info p { margin: 5px 0 0; color: #555; font-weight: 700; }
 
         .container { width: 100%; max-width: 850px; }
 
-        /* البطاقة */
         .question-card {
             background: white; border-radius: 20px; padding: 25px; margin-bottom: 25px;
-            border: 2px solid #e5e7eb; position: relative; box-sizing: border-box;
-            text-align: right; page-break-inside: avoid !important;
+            border: 2px solid #e5e7eb; position: relative; text-align: right;
+            page-break-inside: avoid !important;
         }
 
         .question-card::before {
@@ -45,31 +43,47 @@
         }
 
         .type-select {
-            width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc;
+            width: 200px; padding: 8px; border-radius: 8px; border: 1px solid #ccc;
             margin-bottom: 15px; font-family: 'Cairo'; font-weight: bold; background: #f8f9fa;
+        }
+
+        /* تنسيق التناظر اللفظي المطوّر */
+        .tanazor-row {
+            display: flex; align-items: center; justify-content: center;
+            gap: 15px; margin-bottom: 20px; background: #fff5f5;
+            padding: 15px; border-radius: 12px; border: 2px solid #ffccd5;
+        }
+
+        .tanazor-word {
+            width: 40%; text-align: center; padding: 10px;
+            border: none; border-bottom: 3px solid var(--q-red);
+            color: var(--q-red); font-weight: 900; font-size: 1.4rem;
+            background: transparent; outline: none;
         }
 
         .q-text-input {
             width: 100%; padding: 15px; border: 2.5px solid #ffccd5;
             border-radius: 12px; color: var(--q-red); font-weight: 900;
-            font-size: 1.2rem; margin-bottom: 15px; font-family: 'Cairo'; box-sizing: border-box;
-        }
-
-        /* تنسيق خاص للتناظر اللفظي */
-        .tanazor-box { display: flex; align-items: center; gap: 10px; justify-content: center; margin-bottom: 15px; }
-        .tanazor-input { 
-            width: 45%; text-align: center; padding: 12px; border: 2.5px solid #ffccd5; 
-            border-radius: 12px; color: var(--q-red); font-weight: 900; font-size: 1.2rem;
+            font-size: 1.2rem; margin-bottom: 15px; font-family: 'Cairo';
         }
 
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .opt-input {
             width: 100%; padding: 12px; border: 1.5px solid #d1d5db;
             border-radius: 10px; color: var(--ans-black); font-weight: 900;
-            font-size: 1.1rem; box-sizing: border-box; text-align: right;
+            font-size: 1.1rem; text-align: right;
         }
 
-        /* الأزرار */
+        /* خانة الإجابة الصحيحة */
+        .correct-ans-box {
+            margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ddd;
+        }
+        .correct-input {
+            width: 100%; padding: 10px; border: 2px solid var(--success-green);
+            border-radius: 10px; color: var(--success-green); font-weight: 900;
+            text-align: right; font-family: 'Cairo';
+        }
+
         .controls {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             display: flex; gap: 10px; z-index: 1000; background: white;
@@ -80,10 +94,10 @@
         .btn-add { background: var(--primary-blue); color: white; }
         .btn-pdf { background: var(--q-red); color: white; }
 
-        .remove-btn { color: #ddd; cursor: pointer; font-size: 1.2rem; }
+        .remove-btn { color: #ddd; cursor: pointer; font-size: 1.3rem; transition: 0.2s; }
+        .remove-btn:hover { color: var(--q-red); }
 
-        /* لفرض فاصل الصفحات في PDF */
-        .pdf-page-break { page-break-after: always; }
+        @media print { .pdf-page-break { page-break-after: always; } }
     </style>
 </head>
 <body>
@@ -93,7 +107,7 @@
             <h2>أ. عبدالعزيز الفيفي</h2>
             <p>😉 ثانوية الأمير عبدالمجيد</p>
         </div>
-        <div class="edu-icon-container"><i class="fas fa-graduation-cap fa-3x" style="color: var(--primary-blue);"></i></div>
+        <div class="edu-icon-container"><i class="fas fa-graduation-cap fa-4x" style="color: var(--primary-blue);"></i></div>
     </div>
 
     <div class="container" id="quiz-content"></div>
@@ -101,7 +115,7 @@
     <div class="controls">
         <button class="btn btn-add" onclick="addQuestion()"><i class="fas fa-plus"></i> إضافة سؤال</button>
         <button class="btn btn-pdf" id="pdfBtn" style="display:none;" onclick="saveAsPDF()"><i class="fas fa-file-pdf"></i> حفظ PDF</button>
-        <button class="btn btn-clear" style="background:#444; color:white; border-radius:30px; padding:10px;" onclick="clearAll()">مسح</button>
+        <button class="btn" style="background:#444; color:white;" onclick="clearAll()">مسح الكل</button>
     </div>
 
     <script>
@@ -115,23 +129,22 @@
             const type = data ? data.type : 'normal';
 
             card.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
                     <select class="type-select" onchange="toggleType(this)">
                         <option value="normal" ${type === 'normal' ? 'selected' : ''}>سؤال عادي / إكمال جمل</option>
                         <option value="tanazor" ${type === 'tanazor' ? 'selected' : ''}>تناظر لفظي ( : )</option>
                         <option value="khata" ${type === 'khata' ? 'selected' : ''}>خطأ سياقي</option>
                         <option value="shaza" ${type === 'shaza' ? 'selected' : ''}>المفردة الشاذة</option>
-                        <option value="estieab" ${type === 'estieab' ? 'selected' : ''}>استيعاب المقروء</option>
                     </select>
                     <i class="fas fa-times-circle remove-btn" onclick="removeQuestion(this)"></i>
                 </div>
 
-                <div class="q-area">
+                <div class="q-area" style="margin-top:10px">
                     ${type === 'tanazor' ? `
-                        <div class="tanazor-box">
-                            <input type="text" placeholder="الكلمة 2" class="tanazor-input t2" value="${data ? data.text2 : ''}" oninput="saveAll()">
-                            <span style="font-weight:900; font-size:1.5rem; color:red"> : </span>
-                            <input type="text" placeholder="الكلمة 1" class="tanazor-input t1" value="${data ? data.text1 : ''}" oninput="saveAll()">
+                        <div class="tanazor-row">
+                            <input type="text" placeholder="الكلمة الثانية" class="tanazor-word t2" value="${data ? data.text2 : ''}" oninput="saveAll()">
+                            <span style="font-weight:900; font-size:1.8rem; color:red">:</span>
+                            <input type="text" placeholder="الكلمة الأولى" class="tanazor-word t1" value="${data ? data.text1 : ''}" oninput="saveAll()">
                         </div>
                     ` : `
                         <input type="text" placeholder="اكتب نص السؤال هنا..." class="q-text-input q-main" value="${data ? data.text : ''}" oninput="saveAll()">
@@ -139,10 +152,15 @@
                 </div>
 
                 <div class="options-grid">
-                    <input type="text" placeholder="أ" class="opt-input opt" value="${data ? data.opts[0] : ''}" oninput="saveAll()">
-                    <input type="text" placeholder="ب" class="opt-input opt" value="${data ? data.opts[1] : ''}" oninput="saveAll()">
-                    <input type="text" placeholder="ج" class="opt-input opt" value="${data ? data.opts[2] : ''}" oninput="saveAll()">
-                    <input type="text" placeholder="د" class="opt-input opt" value="${data ? data.opts[3] : ''}" oninput="saveAll()">
+                    <input type="text" placeholder="أ" class="opt-input opt" value="${data ? (data.opts?.[0] || '') : ''}" oninput="saveAll()">
+                    <input type="text" placeholder="ب" class="opt-input opt" value="${data ? (data.opts?.[1] || '') : ''}" oninput="saveAll()">
+                    <input type="text" placeholder="ج" class="opt-input opt" value="${data ? (data.opts?.[2] || '') : ''}" oninput="saveAll()">
+                    <input type="text" placeholder="د" class="opt-input opt" value="${data ? (data.opts?.[3] || '') : ''}" oninput="saveAll()">
+                </div>
+
+                <div class="correct-ans-box">
+                    <label style="color:var(--success-green); font-weight:900; font-size:0.9rem">الإجابة الصحيحة:</label>
+                    <input type="text" placeholder="اكتب الحل هنا..." class="correct-input ans-val" value="${data ? (data.ans || '') : ''}" oninput="saveAll()">
                 </div>
             `;
             container.appendChild(card);
@@ -155,10 +173,10 @@
             const qArea = card.querySelector('.q-area');
             if (select.value === 'tanazor') {
                 qArea.innerHTML = `
-                    <div class="tanazor-box">
-                        <input type="text" placeholder="الكلمة 2" class="tanazor-input t2" oninput="saveAll()">
-                        <span style="font-weight:900; font-size:1.5rem; color:red"> : </span>
-                        <input type="text" placeholder="الكلمة 1" class="tanazor-input t1" oninput="saveAll()">
+                    <div class="tanazor-row">
+                        <input type="text" placeholder="الكلمة الثانية" class="tanazor-word t2" oninput="saveAll()">
+                        <span style="font-weight:900; font-size:1.8rem; color:red">:</span>
+                        <input type="text" placeholder="الكلمة الأولى" class="tanazor-word t1" oninput="saveAll()">
                     </div>`;
             } else {
                 qArea.innerHTML = `<input type="text" placeholder="اكتب نص السؤال هنا..." class="q-text-input q-main" oninput="saveAll()">`;
@@ -173,7 +191,8 @@
             document.querySelectorAll('.question-card').forEach(card => {
                 const type = card.querySelector('.type-select').value;
                 const opts = Array.from(card.querySelectorAll('.opt')).map(i => i.value);
-                let qData = { type, opts };
+                const ans = card.querySelector('.ans-val').value;
+                let qData = { type, opts, ans };
                 if (type === 'tanazor') {
                     qData.text1 = card.querySelector('.t1').value;
                     qData.text2 = card.querySelector('.t2').value;
@@ -182,11 +201,11 @@
                 }
                 questions.push(qData);
             });
-            localStorage.setItem('fifi_qudurat_v1', JSON.stringify(questions));
+            localStorage.setItem('fifi_qudurat_final', JSON.stringify(questions));
         }
 
         function loadQuestions() {
-            const saved = localStorage.getItem('fifi_qudurat_v1');
+            const saved = localStorage.getItem('fifi_qudurat_final');
             if (saved) JSON.parse(saved).forEach(q => addQuestion(q));
             updateUI();
         }
@@ -195,7 +214,7 @@
             document.getElementById('pdfBtn').style.display = document.querySelectorAll('.question-card').length > 0 ? 'flex' : 'none';
         }
 
-        function clearAll() { if(confirm("مسح؟")) { localStorage.removeItem('fifi_qudurat_v1'); location.reload(); } }
+        function clearAll() { if(confirm("حذف جميع الأسئلة؟")) { localStorage.removeItem('fifi_qudurat_final'); location.reload(); } }
 
         function saveAsPDF() {
             const mainContainer = document.createElement('div');
@@ -204,22 +223,18 @@
             for (let i = 0; i < cards.length; i += 3) {
                 const page = document.createElement('div');
                 page.style.padding = "10px";
-                
-                // إضافة الترويسة لكل صفحة
                 page.appendChild(document.getElementById('pdf-header').cloneNode(true));
                 
-                // إضافة 3 أسئلة
                 for (let j = i; j < i + 3 && j < cards.length; j++) {
                     const clone = cards[j].cloneNode(true);
                     clone.querySelector('.type-select').style.display = 'none';
                     clone.querySelector('.remove-btn').style.display = 'none';
                     page.appendChild(clone);
                 }
-
                 mainContainer.appendChild(page);
                 if (i + 3 < cards.length) {
                     const pb = document.createElement('div');
-                    pb.className = "pdf-page-break";
+                    pb.style.pageBreakAfter = "always";
                     mainContainer.appendChild(pb);
                 }
             }
