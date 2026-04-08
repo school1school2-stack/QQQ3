@@ -51,10 +51,10 @@
         .opt-word { width: 100%; border: none; outline: none; font-weight: 900; color: #000; background: transparent; text-align: right; font-family: 'Cairo'; }
 
         .pair-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; background: #fff1f2; padding: 15px; border-radius: 12px; border: 1.5px dashed #fca5a5; width: 100%; box-sizing: border-box; }
-        .pair-word { width: 45%; text-align: center; border: none; background: white; padding: 10px; border-radius: 8px; color: var(--q-red); font-weight: 900; font-size: 1.3rem; }
+        .pair-word { width: 45%; text-align: center; border: none; background: white; padding: 10px; border-radius: 8px; color: var(--q-red); font-weight: 900; font-size: 1.3rem; font-family: 'Cairo'; }
 
         .correct-ans-box { margin-top: 15px; padding: 10px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0; box-sizing: border-box; }
-        .correct-input { width: 100%; background: transparent; border: none; outline: none; color: #166534; font-weight: 900; text-align: right; }
+        .correct-input { width: 100%; background: transparent; border: none; outline: none; color: #166534; font-weight: 900; text-align: right; font-family: 'Cairo'; }
 
         .controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 1000; background: rgba(30, 41, 59, 0.95); padding: 12px 25px; border-radius: 50px; backdrop-filter: blur(10px); width: max-content; }
         .btn { border: none; padding: 10px 18px; border-radius: 30px; font-weight: 800; cursor: pointer; color: white; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-family: 'Cairo'; font-size: 0.9rem; }
@@ -66,7 +66,7 @@
 
         .remove-btn { color: #cbd5e1; cursor: pointer; font-size: 1.2rem; }
         
-        @media (max-width: 600px) { .options-grid { grid-template-columns: 1fr; } .user-header { padding: 10px 15px; } .header-info h2 { font-size: 1.3rem; } }
+        @media (max-width: 600px) { .options-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -130,7 +130,7 @@
 
         function renderQArea(type, data) {
             if (type === 'tanazor') {
-                return `<div class="pair-row"><input type="text" placeholder="2" class="pair-word t2" value="${data ? data.text2 : ''}" oninput="saveAll()"><span style="color:red; font-weight:900; font-size:1.5rem">:</span><input type="text" placeholder="1" class="pair-word t1" value="${data ? data.text1 : ''}" oninput="saveAll()"></div>`;
+                return `<div class="pair-row"><input type="text" placeholder="2" class="pair-word t2" value="${data ? data.text2 : ''}" oninput="saveAll()"><span style="color:red; font-weight:900; font-size:1.5rem"> : </span><input type="text" placeholder="1" class="pair-word t1" value="${data ? data.text1 : ''}" oninput="saveAll()"></div>`;
             } else if (type === 'estieab') {
                 return `<textarea class="estieab-box t-area" style="height:100px; width:100%; font-family:Cairo; resize:none;" placeholder="نص القطعة..." oninput="saveAll()">${data ? data.text_area : ''}</textarea><input type="text" placeholder="السؤال..." class="q-text-input q-main" value="${data ? data.text : ''}" oninput="saveAll()">`;
             } else {
@@ -145,7 +145,7 @@
                 if (type === 'tanazor') {
                     const v1 = data?.opt_pairs ? data.opt_pairs[i][0] : '';
                     const v2 = data?.opt_pairs ? data.opt_pairs[i][1] : '';
-                    html += `<div class="opt-pair-row"><span>${labels[i]}</span><input type="text" class="opt-word op2" value="${v2}" oninput="saveAll()"><span style="color:red; font-weight:900">:</span><input type="text" class="opt-word op1" value="${v1}" oninput="saveAll()"></div>`;
+                    html += `<div class="opt-pair-row"><span>${labels[i]}</span><input type="text" class="opt-word op2" value="${v2}" oninput="saveAll()"><span style="color:red; font-weight:900"> : </span><input type="text" class="opt-word op1" value="${v1}" oninput="saveAll()"></div>`;
                 } else {
                     const val = data?.opts ? data.opts[i] : '';
                     html += `<div class="opt-pair-row"><span>${labels[i]}</span><input type="text" class="opt-word opt" style="margin-right:10px" value="${val}" oninput="saveAll()"></div>`;
@@ -179,11 +179,11 @@
                 }
                 questions.push(qData);
             });
-            localStorage.setItem('fifi_v9_final', JSON.stringify(questions));
+            localStorage.setItem('fifi_v10_fix', JSON.stringify(questions));
         }
 
         function loadQuestions() {
-            const saved = localStorage.getItem('fifi_v9_final');
+            const saved = localStorage.getItem('fifi_v10_fix');
             if (saved) JSON.parse(saved).forEach(q => addQuestion(q));
         }
 
@@ -200,24 +200,39 @@
                 const originalCard = document.querySelectorAll('.question-card')[idx];
                 const type = originalCard.querySelector('.type-select').value;
                 
-                // إضافة نوع السؤال في الصورة
                 const label = document.createElement('div');
                 label.className = "type-label";
                 label.innerText = typeMap[type];
                 card.prepend(label);
 
-                card.querySelectorAll('input, textarea').forEach((input, inputIdx) => {
-                    const originalInput = originalCard.querySelectorAll('input, textarea')[inputIdx];
-                    const textSpan = document.createElement('div');
-                    textSpan.innerText = originalInput.value;
-                    textSpan.style.background = window.getComputedStyle(originalInput).backgroundColor;
-                    textSpan.style.color = window.getComputedStyle(originalInput).color;
-                    textSpan.style.padding = "10px"; textSpan.style.borderRadius = "10px";
-                    textSpan.style.fontWeight = "900"; textSpan.style.fontSize = window.getComputedStyle(originalInput).fontSize;
-                    textSpan.style.border = window.getComputedStyle(originalInput).border;
-                    textSpan.style.marginBottom = "10px";
-                    input.replaceWith(textSpan);
-                });
+                // معالجة التناظر اللفظي بشكل خاص عند الحفظ
+                if(type === 'tanazor') {
+                    const row = card.querySelector('.pair-row');
+                    const t1 = originalCard.querySelector('.t1').value;
+                    const t2 = originalCard.querySelector('.t2').value;
+                    row.innerHTML = `<div style="display:flex; justify-content:center; align-items:center; width:100%; font-weight:900; font-size:1.5rem; color:var(--q-red);"><span>${t2}</span><span style="margin:0 10px;"> : </span><span>${t1}</span></div>`;
+                    
+                    card.querySelectorAll('.opt-pair-row').forEach((optRow, optIdx) => {
+                        const originalOptRow = originalCard.querySelectorAll('.opt-pair-row')[optIdx];
+                        const op1 = originalOptRow.querySelector('.op1').value;
+                        const op2 = originalOptRow.querySelector('.op2').value;
+                        const char = optRow.querySelector('span').innerText;
+                        optRow.innerHTML = `<span style="margin-left:10px;">${char}</span> <div style="display:flex; justify-content:center; width:100%; font-weight:900;"><span>${op2}</span><span style="margin:0 5px;"> : </span><span>${op1}</span></div>`;
+                    });
+                } else {
+                    card.querySelectorAll('input, textarea').forEach((input, inputIdx) => {
+                        const originalInput = originalCard.querySelectorAll('input, textarea')[inputIdx];
+                        const textSpan = document.createElement('div');
+                        textSpan.innerText = originalInput.value;
+                        textSpan.style.background = window.getComputedStyle(originalInput).backgroundColor;
+                        textSpan.style.color = window.getComputedStyle(originalInput).color;
+                        textSpan.style.padding = "10px"; textSpan.style.borderRadius = "10px";
+                        textSpan.style.fontWeight = "900"; textSpan.style.fontSize = window.getComputedStyle(originalInput).fontSize;
+                        textSpan.style.border = window.getComputedStyle(originalInput).border;
+                        textSpan.style.marginBottom = "10px";
+                        input.replaceWith(textSpan);
+                    });
+                }
                 card.querySelectorAll('.remove-btn, .type-select').forEach(el => el.remove());
             });
             
@@ -231,7 +246,7 @@
                     link.href = canvas.toDataURL("image/png"); link.click();
                     document.body.removeChild(captureArea);
                 });
-            }, 500);
+            }, 600);
         }
 
         function saveAsPDF() {
@@ -244,14 +259,25 @@
                 page.appendChild(document.getElementById('main-header').cloneNode(true));
                 for (let j = i; j < i + 3 && j < cards.length; j++) {
                     const clone = cards[j].cloneNode(true);
-                    const originalType = cards[j].querySelector('.type-select').value;
-                    
+                    const type = cards[j].querySelector('.type-select').value;
                     const label = document.createElement('div');
-                    label.className = "type-label";
-                    label.innerText = typeMap[originalType];
+                    label.className = "type-label"; label.innerText = typeMap[type];
                     clone.prepend(label);
-
                     clone.querySelector('.type-select').remove(); clone.querySelector('.remove-btn').remove();
+                    
+                    // إصلاح الحفظ في الـ PDF للتناظر
+                    if(type === 'tanazor') {
+                        const t1 = cards[j].querySelector('.t1').value;
+                        const t2 = cards[j].querySelector('.t2').value;
+                        clone.querySelector('.pair-row').innerHTML = `<div style="display:flex; justify-content:center; align-items:center; width:100%; font-weight:900; font-size:1.4rem; color:var(--q-red);"><span>${t2}</span><span style="margin:0 10px;"> : </span><span>${t1}</span></div>`;
+                        clone.querySelectorAll('.opt-pair-row').forEach((row, oIdx) => {
+                            const op1 = cards[j].querySelectorAll('.op1')[oIdx].value;
+                            const op2 = cards[j].querySelectorAll('.op2')[oIdx].value;
+                            const char = row.querySelector('span').innerText;
+                            row.innerHTML = `<span style="margin-left:10px;">${char}</span> <div style="display:flex; justify-content:center; width:100%; font-weight:900;"><span>${op2}</span><span style="margin:0 5px;"> : </span><span>${op1}</span></div>`;
+                        });
+                    }
+
                     const textarea = clone.querySelector('textarea');
                     if(textarea) {
                         const div = document.createElement('div'); div.innerText = textarea.value;
