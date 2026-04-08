@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة أ. عبدالعزيز الفيفي - القدرات</title>
+    <title>منصة أ. عبدالعزيز الفيفي - النسخة الاحترافية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -32,50 +32,45 @@
 
         .question-card {
             background: white; border-radius: 20px; padding: 25px; margin-bottom: 20px;
-            border: 2px solid #e2e8f0; position: relative; text-align: right; box-sizing: border-box; overflow: hidden;
+            border: 2px solid #e2e8f0; position: relative; text-align: right; box-sizing: border-box;
         }
 
         .question-card::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: var(--royal-blue); }
 
         .type-select { background: #f1f5f9; border: none; padding: 8px; border-radius: 10px; font-weight: 700; margin-bottom: 15px; font-family: 'Cairo'; cursor: pointer; }
 
-        .estieab-box { background: #fff9c4 !important; border: 2px solid #fbc02d; border-radius: 12px; padding: 15px; margin-bottom: 15px; color: #000; font-weight: 700; line-height: 1.7; width: 100%; box-sizing: border-box; }
+        .estieab-box { background: #fff9c4 !important; border: 2px solid #fbc02d; border-radius: 12px; padding: 15px; margin-bottom: 15px; color: #000; font-weight: 700; line-height: 1.7; text-align: right; }
 
-        .q-text-input { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; color: var(--q-red); font-weight: 900; font-size: 1.3rem; margin-bottom: 15px; outline: none; text-align: right; box-sizing: border-box; }
+        .q-text-input { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; color: var(--q-red); font-weight: 900; font-size: 1.3rem; margin-bottom: 15px; outline: none; text-align: right; }
 
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-        .opt-pair-row { display: flex; align-items: center; background: white; border: 1.5px solid #d1d5db; border-radius: 10px; padding: 8px; }
-        .opt-word { width: 100%; border: none; outline: none; font-weight: 900; color: #000; background: transparent; text-align: right; font-family: 'Cairo'; }
+        /* حل مشكلة التصاق النصوص بالحروف والترميز */
+        .opt-wrapper { display: flex; align-items: center; background: white; border: 1.5px solid #d1d5db; border-radius: 10px; padding: 8px 12px; }
+        .label-span { font-weight: 900; color: #1e3a8a; margin-left: 12px; min-width: 20px; border-left: 1px solid #eee; padding-left: 8px; }
+        .opt-input { width: 100%; border: none; outline: none; font-weight: 700; color: #000; background: transparent; text-align: right; font-family: 'Cairo'; }
 
-        .pair-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; background: #fff1f2; padding: 15px; border-radius: 12px; border: 1.5px dashed #fca5a5; }
-        .pair-word { width: 45%; text-align: center; border: none; background: white; padding: 10px; border-radius: 8px; color: var(--q-red); font-weight: 900; font-size: 1.3rem; }
+        /* حل مشكلة التناظر اللفظي والالتصاق بـ : */
+        .tanazor-box { display: flex; align-items: center; justify-content: center; gap: 20px; background: #fff1f2; padding: 15px; border-radius: 12px; border: 1.5px dashed #fca5a5; margin-bottom: 15px; }
+        .tan-word { width: 42%; text-align: center; border: none; background: white; padding: 10px; border-radius: 8px; color: var(--q-red); font-weight: 900; font-size: 1.3rem; }
+        .sep-red { color: red; font-weight: 900; font-size: 1.8rem; padding: 0 10px; }
 
-        .correct-ans-box { margin-top: 15px; padding: 10px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0; }
-        .correct-input { width: 100%; background: transparent; border: none; outline: none; color: #166534; font-weight: 900; text-align: right; }
+        .opt-tan-box { display: flex; align-items: center; background: white; border: 1.5px solid #d1d5db; border-radius: 10px; padding: 8px 12px; }
+        .tan-input { border: none; outline: none; text-align: center; width: 40%; font-weight: 700; font-family: 'Cairo'; }
 
-        .controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 1000; background: rgba(30, 41, 59, 0.95); padding: 10px 25px; border-radius: 50px; backdrop-filter: blur(10px); width: max-content; }
-        .btn { border: none; padding: 10px 18px; border-radius: 30px; font-weight: 800; cursor: pointer; color: white; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-family: 'Cairo'; font-size: 0.9rem; }
+        .controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 1000; background: rgba(30, 41, 59, 0.95); padding: 12px 30px; border-radius: 50px; backdrop-filter: blur(10px); }
+        .btn { border: none; padding: 10px 20px; border-radius: 30px; font-weight: 800; cursor: pointer; color: white; display: flex; align-items: center; gap: 8px; transition: 0.3s; font-family: 'Cairo'; }
         
-        .btn-add { background: #3b82f6; }
-        .btn-pdf { background: #ef4444; }
-        .btn-img { background: #10b981; }
-        .btn-clear { background: #64748b; }
-
-        .remove-btn { color: #cbd5e1; cursor: pointer; font-size: 1.2rem; }
-        
-        @media (max-width: 600px) { .options-grid { grid-template-columns: 1fr; } }
+        .btn-add { background: #3b82f6; } .btn-pdf { background: #ef4444; } .btn-img { background: #10b981; } .btn-clear { background: #64748b; }
     </style>
 </head>
 <body>
 
     <div class="user-header" id="main-header">
-        <div style="background: var(--royal-blue); width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
-            <i class="fas fa-award"></i>
-        </div>
+        <div style="background: var(--royal-blue); width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;"><i class="fas fa-award"></i></div>
         <div class="header-info">
             <h2>أ. عبدالعزيز الفيفي</h2>
-            <p> 😉 ثانوية الأمير عبدالمجيد </p>
+            <p>😉 ثانوية الأمير عبدالمجيد</p>
         </div>
     </div>
 
@@ -104,15 +99,12 @@
                         <option value="tanazor" ${type === 'tanazor' ? 'selected' : ''}>تناظر لفظي ( : )</option>
                         <option value="estieab" ${type === 'estieab' ? 'selected' : ''}>استيعاب المقروء</option>
                         <option value="shaza" ${type === 'shaza' ? 'selected' : ''}>المفردة الشاذة</option>
-                        <option value="irtibat" ${type === 'irtibat' ? 'selected' : ''}>الارتباط والاختلاف</option>
                     </select>
-                    <i class="fas fa-times-circle remove-btn" onclick="removeQuestion(this)"></i>
+                    <i class="fas fa-times-circle" style="color:#cbd5e1; cursor:pointer;" onclick="this.closest('.question-card').remove(); saveAll();"></i>
                 </div>
                 <div class="q-area">${renderQArea(type, data)}</div>
                 <div class="options-grid">${renderOptions(type, data)}</div>
-                <div class="correct-ans-box">
-                    <input type="text" placeholder="الإجابة النموذجية..." class="correct-input ans-val" value="${data ? (data.ans || '') : ''}" oninput="saveAll()">
-                </div>
+                <div style="margin-top:15px; padding:10px; background:#f0fdf4; border-radius:10px;"><input type="text" placeholder="الإجابة..." class="ans-val" style="width:100%; border:none; background:transparent; font-weight:900; color:#166534; text-align:right;" value="${data ? (data.ans || '') : ''}" oninput="saveAll()"></div>
             `;
             container.appendChild(card);
             saveAll();
@@ -120,25 +112,25 @@
 
         function renderQArea(type, data) {
             if (type === 'tanazor') {
-                return `<div class="pair-row"><input type="text" placeholder="2" class="pair-word t2" value="${data ? data.text2 : ''}" oninput="saveAll()"><span style="color:red; font-weight:900; font-size:1.5rem">:</span><input type="text" placeholder="1" class="pair-word t1" value="${data ? data.text1 : ''}" oninput="saveAll()"></div>`;
+                return `<div class="tanazor-box"><input type="text" placeholder="2" class="tan-word t2" value="${data ? data.text2 : ''}" oninput="saveAll()"><span class="sep-red">:</span><input type="text" placeholder="1" class="tan-word t1" value="${data ? data.text1 : ''}" oninput="saveAll()"></div>`;
             } else if (type === 'estieab') {
-                return `<textarea class="estieab-box t-area" style="height:100px; width:100%; font-family:Cairo; resize:none;" placeholder="نص القطعة..." oninput="saveAll()">${data ? data.text_area : ''}</textarea><input type="text" placeholder="السؤال..." class="q-text-input q-main" value="${data ? data.text : ''}" oninput="saveAll()">`;
+                return `<textarea class="estieab-box t-area" style="height:100px; width:100%; resize:none; font-family:Cairo; padding:10px; box-sizing:border-box; border:2px solid #fbc02d; border-radius:10px;" placeholder="نص القطعة..." oninput="saveAll()">${data ? data.text_area : ''}</textarea><input type="text" placeholder="السؤال..." class="q-text-input q-main" value="${data ? data.text : ''}" oninput="saveAll()">`;
             } else {
                 return `<input type="text" placeholder="اكتب السؤال هنا..." class="q-text-input q-main" value="${data ? data.text : ''}" oninput="saveAll()">`;
             }
         }
 
         function renderOptions(type, data) {
-            let html = '';
             const labels = ['أ', 'ب', 'ج', 'د'];
+            let html = '';
             for (let i = 0; i < 4; i++) {
                 if (type === 'tanazor') {
                     const v1 = data?.opt_pairs ? data.opt_pairs[i][0] : '';
                     const v2 = data?.opt_pairs ? data.opt_pairs[i][1] : '';
-                    html += `<div class="opt-pair-row"><span>${labels[i]}</span><input type="text" class="opt-word op2" value="${v2}" oninput="saveAll()"><span style="color:red; font-weight:900">:</span><input type="text" class="opt-word op1" value="${v1}" oninput="saveAll()"></div>`;
+                    html += `<div class="opt-tan-box"><span class="label-span">${labels[i]}</span><input type="text" class="tan-input op2" value="${v2}" placeholder="2" oninput="saveAll()"><span style="color:red; font-weight:900; padding:0 5px">:</span><input type="text" class="tan-input op1" value="${v1}" placeholder="1" oninput="saveAll()"></div>`;
                 } else {
                     const val = data?.opts ? data.opts[i] : '';
-                    html += `<div class="opt-pair-row"><span>${labels[i]}</span><input type="text" class="opt-word opt" style="margin-right:10px" value="${val}" oninput="saveAll()"></div>`;
+                    html += `<div class="opt-wrapper"><span class="label-span">${labels[i]}</span><input type="text" class="opt-input opt" value="${val}" oninput="saveAll()"></div>`;
                 }
             }
             return html;
@@ -151,8 +143,6 @@
             saveAll();
         }
 
-        function removeQuestion(btn) { btn.closest('.question-card').remove(); saveAll(); }
-
         function saveAll() {
             const questions = [];
             document.querySelectorAll('.question-card').forEach(card => {
@@ -161,69 +151,61 @@
                 let qData = { type, ans };
                 if (type === 'tanazor') {
                     qData.text1 = card.querySelector('.t1').value; qData.text2 = card.querySelector('.t2').value;
-                    qData.opt_pairs = Array.from(card.querySelectorAll('.opt-pair-row')).map(row => [row.querySelector('.op1').value, row.querySelector('.op2').value]);
+                    qData.opt_pairs = Array.from(card.querySelectorAll('.opt-tan-box')).map(r => [r.querySelector('.op1').value, r.querySelector('.op2').value]);
                 } else {
                     qData.text = card.querySelector('.q-main')?.value || "";
                     if(type === 'estieab') qData.text_area = card.querySelector('.t-area').value;
-                    qData.opts = Array.from(card.querySelectorAll('.opt-word.opt')).map(i => i.value);
+                    qData.opts = Array.from(card.querySelectorAll('.opt')).map(i => i.value);
                 }
                 questions.push(qData);
             });
-            localStorage.setItem('fifi_v8_final', JSON.stringify(questions));
+            localStorage.setItem('fifi_v9_final', JSON.stringify(questions));
         }
 
         function loadQuestions() {
-            const saved = localStorage.getItem('fifi_v8_final');
+            const saved = localStorage.getItem('fifi_v9_final');
             if (saved) JSON.parse(saved).forEach(q => addQuestion(q));
         }
 
         function clearAll() { if(confirm("مسح الكل؟")) { localStorage.clear(); location.reload(); } }
 
-        // وظيفة حفظ الصورة المصلحة لضمان ظهور النصوص
-        function saveAsImage() {
+        async function saveAsImage() {
             const captureArea = document.createElement('div');
             captureArea.style.width = "800px";
-            captureArea.style.padding = "20px";
+            captureArea.style.padding = "25px";
             captureArea.style.background = "#f8fafc";
+            captureArea.style.position = "absolute";
+            captureArea.style.top = "-9999px";
             
             // إضافة الترويسة
             captureArea.appendChild(document.getElementById('main-header').cloneNode(true));
             
-            // إضافة الأسئلة مع تحويل الـ inputs إلى نصوص ثابتة لضمان الظهور
+            // تحويل المحتوى لنصوص ثابتة لضمان الظهور والمسافات
             const content = document.getElementById('quiz-content').cloneNode(true);
             content.querySelectorAll('.question-card').forEach((card, idx) => {
                 const originalCard = document.querySelectorAll('.question-card')[idx];
-                
-                // تحويل كل input إلى span داخل النسخة الملتقطة
                 card.querySelectorAll('input, textarea').forEach((input, inputIdx) => {
                     const originalInput = originalCard.querySelectorAll('input, textarea')[inputIdx];
-                    const textSpan = document.createElement('span');
-                    textSpan.innerText = originalInput.value;
-                    textSpan.style.display = "inline-block";
-                    textSpan.style.width = "100%";
-                    textSpan.style.color = window.getComputedStyle(originalInput).color;
-                    textSpan.style.fontWeight = "900";
-                    textSpan.style.fontSize = window.getComputedStyle(originalInput).fontSize;
-                    input.replaceWith(textSpan);
+                    const div = document.createElement('div');
+                    div.innerText = originalInput.value;
+                    div.style.minHeight = "24px";
+                    div.style.color = window.getComputedStyle(originalInput).color;
+                    div.style.fontWeight = "900";
+                    div.style.fontSize = window.getComputedStyle(originalInput).fontSize;
+                    div.style.textAlign = "right";
+                    if (originalInput.classList.contains('tan-input') || originalInput.classList.contains('tan-word')) div.style.textAlign = "center";
+                    input.replaceWith(div);
                 });
-                
-                card.querySelectorAll('.remove-btn, .type-select').forEach(el => el.remove());
+                card.querySelectorAll('.type-select, .fas').forEach(el => el.remove());
             });
-            
+
             captureArea.appendChild(content);
             document.body.appendChild(captureArea);
-            captureArea.style.position = "absolute";
-            captureArea.style.top = "-9999px";
 
-            // التقاط الصورة بعد تأخير بسيط للتأكد من الرندر
             setTimeout(() => {
-                html2canvas(captureArea, {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: "#f8fafc"
-                }).then(canvas => {
+                html2canvas(captureArea, { scale: 3, useCORS: true }).then(canvas => {
                     const link = document.createElement('a');
-                    link.download = `اختبار_الفيفي_صورة.png`;
+                    link.download = `اختبار_الفيفي.png`;
                     link.href = canvas.toDataURL("image/png");
                     link.click();
                     document.body.removeChild(captureArea);
@@ -243,13 +225,11 @@
                 for (let j = i; j < i + 3 && j < cards.length; j++) {
                     const clone = cards[j].cloneNode(true);
                     clone.querySelector('.type-select').remove();
-                    clone.querySelector('.remove-btn').remove();
+                    clone.querySelectorAll('.fas').forEach(f => f.remove());
                     const textarea = clone.querySelector('textarea');
                     if(textarea) {
                         const div = document.createElement('div');
-                        div.innerText = textarea.value;
-                        div.className = "estieab-box";
-                        div.style.height = "auto";
+                        div.innerText = textarea.value; div.className = "estieab-box"; div.style.height = "auto";
                         textarea.replaceWith(div);
                     }
                     page.appendChild(clone);
