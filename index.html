@@ -42,7 +42,6 @@
 
         .question-card::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: var(--royal-blue); }
 
-        /* تنسيق رقم السؤال */
         .q-number-badge {
             background: var(--royal-blue); color: white; padding: 2px 15px; border-radius: 50px;
             font-weight: 900; font-size: 0.9rem; margin-left: 10px; display: inline-block;
@@ -109,8 +108,7 @@
         };
 
         function updateQuestionNumbers() {
-            const cards = document.querySelectorAll('.question-card');
-            cards.forEach((card, index) => {
+            document.querySelectorAll('.question-card').forEach((card, index) => {
                 const badge = card.querySelector('.q-number-badge');
                 if (badge) badge.innerText = `السؤال ${index + 1}`;
             });
@@ -124,7 +122,7 @@
 
             card.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
+                    <div class="card-meta">
                         <span class="q-number-badge">السؤال</span>
                         <select class="type-select" onchange="toggleType(this)">
                             ${Object.keys(typeMap).map(k => `<option value="${k}" ${type === k ? 'selected' : ''}>${typeMap[k]}</option>`).join('')}
@@ -198,11 +196,11 @@
                 }
                 questions.push(qData);
             });
-            localStorage.setItem('fifi_v12_final', JSON.stringify(questions));
+            localStorage.setItem('fifi_v13_final', JSON.stringify(questions));
         }
 
         function loadQuestions() {
-            const saved = localStorage.getItem('fifi_v12_final');
+            const saved = localStorage.getItem('fifi_v13_final');
             if (saved) JSON.parse(saved).forEach(q => addQuestion(q));
         }
 
@@ -223,10 +221,8 @@
                     const globalIdx = i + localIdx + 1;
                     const type = originalCard.querySelector('.type-select').value;
                     
-                    const labelWrap = document.createElement('div');
-                    labelWrap.style.marginBottom = "10px";
-                    labelWrap.innerHTML = `<span class="q-number-badge">السؤال ${globalIdx}</span><span class="type-label">${typeMap[type]}</span>`;
-                    cardClone.prepend(labelWrap);
+                    // تنظيف الكلون قبل إضافة المعلومات الجديدة لضمان عدم التكرار
+                    cardClone.querySelector('.card-meta').innerHTML = `<span class="q-number-badge">السؤال ${globalIdx}</span><span class="type-label">${typeMap[type]}</span>`;
 
                     if(type === 'tanazor') {
                         const row = cardClone.querySelector('.pair-row');
@@ -251,10 +247,7 @@
                             input.replaceWith(textSpan);
                         });
                     }
-                    cardClone.querySelectorAll('.remove-btn, .type-select, .q-number-badge').forEach(el => {
-                        if(!el.parentElement.classList.contains('question-card')) return; // لا تحذف البادج الجديد
-                        el.remove();
-                    });
+                    cardClone.querySelectorAll('.remove-btn, .type-select').forEach(el => el.remove());
                     captureArea.appendChild(cardClone);
                 });
 
@@ -283,15 +276,9 @@
                     const clone = cards[j].cloneNode(true);
                     const type = cards[j].querySelector('.type-select').value;
                     
-                    const labelWrap = document.createElement('div');
-                    labelWrap.style.marginBottom = "10px";
-                    labelWrap.innerHTML = `<span class="q-number-badge">السؤال ${j+1}</span><span class="type-label">${typeMap[type]}</span>`;
-                    clone.prepend(labelWrap);
+                    clone.querySelector('.card-meta').innerHTML = `<span class="q-number-badge">السؤال ${j+1}</span><span class="type-label">${typeMap[type]}</span>`;
 
-                    clone.querySelectorAll('.type-select, .remove-btn, .q-number-badge').forEach(el => {
-                        if(!el.parentElement.classList.contains('question-card')) return;
-                        el.remove();
-                    });
+                    clone.querySelector('.remove-btn').remove();
                     
                     if(type === 'tanazor') {
                         clone.querySelector('.pair-row').innerHTML = `<div style="display:flex; justify-content:center; align-items:center; width:100%; font-weight:900; font-size:1.4rem; color:var(--q-red);"><span>${cards[j].querySelector('.t2').value}</span><span style="margin:0 10px;"> : </span><span>${cards[j].querySelector('.t1').value}</span></div>`;
