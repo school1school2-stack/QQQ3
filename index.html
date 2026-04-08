@@ -54,18 +54,17 @@
         .correct-ans-box { margin-top: 15px; padding: 10px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0; }
         .correct-input { width: 100%; background: transparent; border: none; outline: none; color: #166534; font-weight: 900; text-align: right; }
 
-        /* التحكم - أزرار سفلية مطورة */
         .controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 1000; background: rgba(30, 41, 59, 0.95); padding: 10px 25px; border-radius: 50px; backdrop-filter: blur(10px); width: max-content; }
         .btn { border: none; padding: 10px 18px; border-radius: 30px; font-weight: 800; cursor: pointer; color: white; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-family: 'Cairo'; font-size: 0.9rem; }
         
         .btn-add { background: #3b82f6; }
         .btn-pdf { background: #ef4444; }
-        .btn-img { background: #10b981; } /* لون أخضر لزر الصورة */
+        .btn-img { background: #10b981; }
         .btn-clear { background: #64748b; }
 
         .remove-btn { color: #cbd5e1; cursor: pointer; font-size: 1.2rem; }
         
-        @media (max-width: 600px) { .options-grid { grid-template-columns: 1fr; } .controls { padding: 10px 15px; gap: 5px; } .btn { padding: 8px 12px; font-size: 0.8rem; } }
+        @media (max-width: 600px) { .options-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -76,7 +75,7 @@
         </div>
         <div class="header-info">
             <h2>أ. عبدالعزيز الفيفي</h2>
-            <p>😉 ثانوية الأمير عبدالمجيد</p>
+            <p> 😉 ثانوية الأمير عبدالمجيد </p>
         </div>
     </div>
 
@@ -170,43 +169,66 @@
                 }
                 questions.push(qData);
             });
-            localStorage.setItem('fifi_v7_img', JSON.stringify(questions));
+            localStorage.setItem('fifi_v8_final', JSON.stringify(questions));
         }
 
         function loadQuestions() {
-            const saved = localStorage.getItem('fifi_v7_img');
+            const saved = localStorage.getItem('fifi_v8_final');
             if (saved) JSON.parse(saved).forEach(q => addQuestion(q));
         }
 
         function clearAll() { if(confirm("مسح الكل؟")) { localStorage.clear(); location.reload(); } }
 
-        // وظيفة حفظ الصورة بدقة عالية جداً
+        // وظيفة حفظ الصورة المصلحة لضمان ظهور النصوص
         function saveAsImage() {
             const captureArea = document.createElement('div');
-            captureArea.style.width = "850px";
+            captureArea.style.width = "800px";
             captureArea.style.padding = "20px";
             captureArea.style.background = "#f8fafc";
             
+            // إضافة الترويسة
             captureArea.appendChild(document.getElementById('main-header').cloneNode(true));
+            
+            // إضافة الأسئلة مع تحويل الـ inputs إلى نصوص ثابتة لضمان الظهور
             const content = document.getElementById('quiz-content').cloneNode(true);
-            content.querySelectorAll('.remove-btn, .type-select').forEach(el => el.remove());
+            content.querySelectorAll('.question-card').forEach((card, idx) => {
+                const originalCard = document.querySelectorAll('.question-card')[idx];
+                
+                // تحويل كل input إلى span داخل النسخة الملتقطة
+                card.querySelectorAll('input, textarea').forEach((input, inputIdx) => {
+                    const originalInput = originalCard.querySelectorAll('input, textarea')[inputIdx];
+                    const textSpan = document.createElement('span');
+                    textSpan.innerText = originalInput.value;
+                    textSpan.style.display = "inline-block";
+                    textSpan.style.width = "100%";
+                    textSpan.style.color = window.getComputedStyle(originalInput).color;
+                    textSpan.style.fontWeight = "900";
+                    textSpan.style.fontSize = window.getComputedStyle(originalInput).fontSize;
+                    input.replaceWith(textSpan);
+                });
+                
+                card.querySelectorAll('.remove-btn, .type-select').forEach(el => el.remove());
+            });
+            
             captureArea.appendChild(content);
-
             document.body.appendChild(captureArea);
             captureArea.style.position = "absolute";
             captureArea.style.top = "-9999px";
 
-            html2canvas(captureArea, {
-                scale: 3, // دقة 3 أضعاف (High Quality)
-                useCORS: true,
-                backgroundColor: "#f8fafc"
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `اختبار_الفيفي_${Date.now()}.png`;
-                link.href = canvas.toDataURL("image/png");
-                link.click();
-                document.body.removeChild(captureArea);
-            });
+            // التقاط الصورة بعد تأخير بسيط للتأكد من الرندر
+            setTimeout(() => {
+                html2canvas(captureArea, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: "#f8fafc"
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `اختبار_الفيفي_صورة.png`;
+                    link.href = canvas.toDataURL("image/png");
+                    link.click();
+                    document.body.removeChild(captureArea);
+                });
+            }, 500);
         }
 
         function saveAsPDF() {
