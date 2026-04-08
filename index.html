@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة أ. عبدالعزيز الفيفي - القدرات السحابية</title>
+    <title>منصة أ. عبدالعزيز الفيفي - الإدارة السحابية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -16,26 +16,20 @@
         :root { --royal-blue: #1e3a8a; --q-red: #ef4444; --bg-page: #f8fafc; }
         body { font-family: 'Cairo', sans-serif; background: var(--bg-page); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
 
-        /* الترويسة: اسم يمين - شعار وسط - مدرسة يسار */
+        /* ترويسة الفيفي: توازن تام */
         .user-header {
             width: 100%; max-width: 850px; background: white; border-radius: 15px; padding: 20px;
             display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-bottom: 5px solid #3b82f6; 
             margin-bottom: 30px; box-sizing: border-box;
         }
-        .header-right { text-align: right; }
-        .header-left { text-align: left; }
+        .header-right { text-align: right; } .header-left { text-align: left; }
         .user-name { margin: 0; color: var(--royal-blue); font-weight: 900; font-size: 1.5rem; }
         .school-name { margin: 0; color: #64748b; font-weight: 700; font-size: 1rem; }
         .logo-box { background: var(--royal-blue); width: 55px; height: 55px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; }
 
         .container { width: 100%; max-width: 850px; }
-
-        /* بطاقة السؤال */
-        .question-card {
-            background: white; border-radius: 20px; padding: 25px; margin-bottom: 25px;
-            border: 2px solid #e2e8f0; position: relative; text-align: right; box-sizing: border-box; overflow: hidden;
-        }
+        .question-card { background: white; border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 2px solid #e2e8f0; position: relative; text-align: right; box-sizing: border-box; overflow: hidden; }
         .question-card::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: var(--royal-blue); }
 
         .card-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
@@ -50,19 +44,19 @@
         .opt-pair-row { display: flex; align-items: center; background: white; border: 1.5px solid #d1d5db; border-radius: 10px; padding: 8px; box-sizing: border-box; }
         .opt-word { width: 100%; border: none; outline: none; font-weight: 900; color: #000; background: transparent; text-align: right; font-family: 'Cairo'; }
 
-        /* التناظر */
         .pair-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; background: #fff1f2; padding: 15px; border-radius: 12px; border: 1.5px dashed #fca5a5; width: 100%; box-sizing: border-box; }
         .pair-word { width: 45%; text-align: center; border: none; background: white; padding: 10px; border-radius: 8px; color: var(--q-red); font-weight: 900; font-size: 1.3rem; }
 
         .correct-ans-box { margin-top: 15px; padding: 10px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0; box-sizing: border-box; text-align: right; }
         .correct-input { width: 100%; background: transparent; border: none; outline: none; color: #166534; font-weight: 900; text-align: right; font-family: 'Cairo'; }
 
-        /* الأزرار */
-        .controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 1000; background: rgba(30, 41, 59, 0.95); padding: 10px 20px; border-radius: 50px; backdrop-filter: blur(10px); width: max-content; }
+        /* شريط التحكم المطور */
+        .controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 1000; background: rgba(30, 41, 59, 0.95); padding: 12px 20px; border-radius: 50px; backdrop-filter: blur(10px); width: max-content; }
         .btn { border: none; padding: 8px 15px; border-radius: 30px; font-weight: 800; cursor: pointer; color: white; display: flex; align-items: center; gap: 5px; transition: 0.3s; font-family: 'Cairo'; font-size: 0.85rem; }
+        .btn-add { background: #3b82f6; }
         .btn-cloud-save { background: #a855f7; }
         .btn-cloud-load { background: #4f46e5; }
-        .btn-add { background: #3b82f6; }
+        .btn-cloud-delete { background: #f97316; } /* زر الحذف */
         .btn-pdf { background: #ef4444; }
         .btn-img { background: #10b981; }
         .remove-btn { color: #cbd5e1; cursor: pointer; font-size: 1.2rem; }
@@ -80,17 +74,18 @@
 
     <div class="controls">
         <button class="btn btn-add" onclick="addQuestion()"><i class="fas fa-plus"></i> سؤال</button>
-        <button class="btn btn-cloud-save" onclick="saveToCloud()"><i class="fas fa-cloud-upload-alt"></i> حفظ سحابي</button>
-        <button class="btn btn-cloud-load" onclick="loadFromCloud()"><i class="fas fa-cloud-download-alt"></i> فتح سحابي</button>
+        <button class="btn btn-cloud-save" title="حفظ في السحابة" onclick="saveToCloud()"><i class="fas fa-cloud-upload-alt"></i> حفظ</button>
+        <button class="btn btn-cloud-load" title="فتح من السحابة" onclick="loadFromCloud()"><i class="fas fa-cloud-download-alt"></i> فتح</button>
+        <button class="btn btn-cloud-delete" title="حذف نموذج من السحابة" onclick="deleteFromCloud()"><i class="fas fa-trash-alt"></i> حذف</button>
         <button class="btn btn-pdf" onclick="saveAsPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
         <button class="btn btn-img" onclick="saveAsImages()"><i class="fas fa-image"></i> صور</button>
-        <button class="btn" style="background:#64748b" onclick="clearAll()"><i class="fas fa-trash"></i></button>
+        <button class="btn" style="background:#64748b" onclick="clearAll()"><i class="fas fa-eraser"></i></button>
     </div>
 
     <script>
         const typeMap = { 'normal': 'إكمال جمل / خطأ سياقي', 'tanazor': 'تناظر لفظي ( : )', 'estieab': 'استيعاب المقروء', 'shaza': 'المفردة الشاذة', 'irtibat': 'الارتباط والاختلاف' };
 
-        // --- إعدادات Firebase المأخوذة من صورتك ---
+        // --- إعدادات Firebase الخاصة بمشروعك Youy-apps ---
         const firebaseConfig = {
             apiKey: "AIzaSyAVrIim7aXjg0hGrMk0qVrXT8geRIpHoBk",
             authDomain: "youy-apps.firebaseapp.com",
@@ -164,32 +159,49 @@
             return qs;
         }
 
-        function saveAll() { localStorage.setItem('fifi_v17_final', JSON.stringify(collectData())); }
-        function loadQuestions() { const s = localStorage.getItem('fifi_v17_final'); if(s) JSON.parse(s).forEach(q=>addQuestion(q)); }
+        function saveAll() { localStorage.setItem('fifi_v18_final', JSON.stringify(collectData())); }
+        function loadQuestions() { const s = localStorage.getItem('fifi_v18_final'); if(s) JSON.parse(s).forEach(q=>addQuestion(q)); }
         function clearAll() { if(confirm("مسح الكل؟")) { localStorage.clear(); location.reload(); } }
 
-        // --- وظائف السحابة المطورة ---
+        // --- وظائف السحابة المتكاملة ---
         async function saveToCloud() {
             const name = prompt("أدخل اسماً لهذا النموذج لحفظه سحابياً:");
             if (!name) return;
             try {
                 await db.ref('models/' + name).set({ teacher: "أ. عبدالعزيز الفيفي", data: collectData(), date: new Date().toLocaleString() });
                 alert("تم الحفظ في سحابة الفيفي بنجاح! ✅");
-            } catch (e) { alert("خطأ في السحابة! تأكد من القواعد (Rules) في Firebase."); }
+            } catch (e) { alert("خطأ! تأكد من القواعد في Firebase."); }
         }
 
         function loadFromCloud() {
             db.ref('models').once('value', s => {
                 const ms = s.val(); if(!ms) return alert("السحابة فارغة!");
                 const n = Object.keys(ms);
-                let msg = "اختر النموذج بكتب اسمه تماماً:\n\n";
-                n.forEach((item, index) => { msg += `${index+1} - ${item}\n`; });
+                let msg = "اختر النموذج بكتابة اسمه تماماً:\n\n";
+                n.forEach((item, index) => { msg += `${index+1} - ${item} (${ms[item].date})\n`; });
                 const choice = prompt(msg);
-                if (choice && ms[choice]) { localStorage.setItem('fifi_v17_final', JSON.stringify(ms[choice].data)); location.reload(); }
+                if (choice && ms[choice]) { 
+                    localStorage.setItem('fifi_v18_final', JSON.stringify(ms[choice].data)); 
+                    location.reload(); 
+                }
             });
         }
 
-        // --- وظائف التصدير ---
+        async function deleteFromCloud() {
+            db.ref('models').once('value', snapshot => {
+                const ms = snapshot.val();
+                if (!ms) return alert("لا توجد نماذج لحذفها!");
+                const names = Object.keys(ms);
+                const choice = prompt("اكتب اسم النموذج الذي تريد حذفه نهائياً من السحابة:\n\n" + names.join("\n"));
+                if (choice && ms[choice]) {
+                    if (confirm(`هل أنت متأكد من حذف نموذج "${choice}" نهائياً؟`)) {
+                        db.ref('models/' + choice).remove().then(() => alert("تم الحذف بنجاح! 🗑️"));
+                    }
+                }
+            });
+        }
+
+        // --- وظائف التصدير الموثقة ---
         async function saveAsImages() {
             const cards = Array.from(document.querySelectorAll('.question-card'));
             for (let i = 0; i < cards.length; i += 3) {
