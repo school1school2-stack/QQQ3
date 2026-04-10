@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة أ. عبدالعزيز الفيفي - النسخة المستقرة</title>
+    <title>منصة أ. عبدالعزيز الفيفي - الحل الإلزامي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -29,6 +29,7 @@
         .container { width: 100%; max-width: 850px; padding-bottom: 120px; }
         .question-card { background: white; border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 2px solid #e2e8f0; position: relative; text-align: right; box-sizing: border-box; transition: 0.3s; }
         .question-card::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: var(--royal-blue); }
+        .unsolved { border: 2px solid #ef4444 !important; background: #fff1f2 !important; }
 
         .card-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .q-number-badge { background: var(--royal-blue); color: white; padding: 2px 15px; border-radius: 50px; font-weight: 900; font-size: 0.9rem; }
@@ -47,7 +48,6 @@
         .correct-ans-box { margin-top: 15px; padding: 10px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0; text-align: right; }
         .correct-input { width: 100%; background: transparent; border: none; outline: none; color: #166534; font-weight: 900; text-align: right; font-family: 'Cairo'; }
 
-        /* شريط الأدوات الكامل (صورتك) */
         .controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-wrap: nowrap; gap: 8px; z-index: 1000; background: #1e293b; padding: 10px 15px; border-radius: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); align-items: center; width: max-content; }
         .btn { border: none; padding: 10px 18px; border-radius: 30px; font-weight: 800; cursor: pointer; color: white; display: flex; align-items: center; gap: 8px; transition: 0.3s; font-family: 'Cairo'; font-size: 0.9rem; white-space: nowrap; }
         .btn-add { background: #3b82f6; } .btn-save { background: #a855f7; } .btn-load { background: #4f46e5; }
@@ -106,7 +106,6 @@
 
     <script>
         const typeMap = { 'normal': 'إكمال جمل / خطأ سياقي', 'tanazor': 'تناظر لفظي ( : )', 'estieab': 'استيعاب المقروء', 'shaza': 'المفردة الشاذة', 'irtibat': 'الارتباط والاختلاف' };
-        
         const firebaseConfig = {
             apiKey: "AIzaSyAVrIim7aXjg0hGrMk0qVrXT8geRIpHoBk",
             authDomain: "youy-apps.firebaseapp.com",
@@ -145,7 +144,11 @@
             `;
             container.appendChild(card);
             card.querySelectorAll('.opt-pair-row').forEach(row => {
-                row.onclick = () => { if (document.body.classList.contains('student-mode') && !document.body.classList.contains('locked-mode')) { card.querySelectorAll('.opt-pair-row').forEach(r => r.classList.remove('selected-opt')); row.classList.add('selected-opt'); } };
+                row.onclick = () => { if (document.body.classList.contains('student-mode') && !document.body.classList.contains('locked-mode')) { 
+                    card.querySelectorAll('.opt-pair-row').forEach(r => r.classList.remove('selected-opt')); 
+                    row.classList.add('selected-opt');
+                    card.classList.remove('unsolved'); // إزالة حالة التنبيه عند الحل
+                }};
             });
             updateNumbers();
             if(!document.body.classList.contains('student-mode')) saveAll();
@@ -166,23 +169,52 @@
             return h;
         }
 
+        // --- دالة التصحيح المطورة بالحل الإلزامي ---
         function gradeExam() {
-            let s = 0; const cards = document.querySelectorAll('.question-card'); const report = document.getElementById('report-body'); report.innerHTML = "";
-            document.body.classList.add('locked-mode'); document.getElementById('main-grade-btn').disabled = true;
+            const cards = document.querySelectorAll('.question-card');
+            let firstUnsolved = null;
+            let unsolvedCount = 0;
+
+            // التحقق من حل جميع الأسئلة
+            cards.forEach((card, index) => {
+                const selected = card.querySelector('.selected-opt');
+                if (!selected) {
+                    card.classList.add('unsolved');
+                    unsolvedCount++;
+                    if (!firstUnsolved) firstUnsolved = card;
+                } else {
+                    card.classList.remove('unsolved');
+                }
+            });
+
+            if (unsolvedCount > 0) {
+                alert(`عذراً يا بطل! لم تحل ${unsolvedCount} من الأسئلة. يرجى إكمال جميع الأسئلة قبل إرسال النتيجة.`);
+                firstUnsolved.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            // إذا تم حل الجميع، ابدأ التصحيح
+            let s = 0;
+            const report = document.getElementById('report-body'); report.innerHTML = "";
+            document.body.classList.add('locked-mode');
+            document.getElementById('main-grade-btn').disabled = true;
+
             cards.forEach((c, i) => {
-                const sel = c.querySelector('.selected-opt span')?.innerText || "لم يحل";
+                const sel = c.querySelector('.selected-opt span')?.innerText;
                 const cor = c.querySelector('.ans-val').value.trim().toUpperCase();
                 const isCor = sel === cor; if(isCor) s++;
                 const qTxt = c.querySelector('.q-main')?.value || (c.querySelector('.t1')?.value + " : " + c.querySelector('.t2')?.value) || "سؤال";
                 report.innerHTML += `<tr><td>${i+1}</td><td style="text-align:right">${qTxt}</td><td style="color:${isCor?'#10b981':'#ef4444'}">${sel}</td><td style="color:#10b981">${cor}</td><td>${isCor?'✅':'❌'}</td></tr>`;
                 c.style.borderColor = isCor ? "#10b981" : "#ef4444";
             });
+
             document.getElementById('score-summary').innerText = `النتيجة النهائية: ${s} من ${cards.length}`;
-            document.getElementById('report-modal').style.display = 'block'; document.getElementById('modal-overlay').style.display = 'block';
+            document.getElementById('report-modal').style.display = 'block'; 
+            document.getElementById('modal-overlay').style.display = 'block';
         }
 
         function closeReport() { document.getElementById('report-modal').style.display = 'none'; document.getElementById('modal-overlay').style.display = 'none'; }
-        function resetExam() { if(confirm("إعادة الاختبار؟")) { document.body.classList.remove('locked-mode'); document.getElementById('main-grade-btn').disabled = false; document.querySelectorAll('.opt-pair-row').forEach(r => r.classList.remove('selected-opt')); document.querySelectorAll('.question-card').forEach(c => c.style.borderColor = "#e2e8f0"); window.scrollTo({top:0,behavior:'smooth'}); } }
+        function resetExam() { if(confirm("إعادة الاختبار؟")) { document.body.classList.remove('locked-mode'); document.getElementById('main-grade-btn').disabled = false; document.querySelectorAll('.opt-pair-row').forEach(r => r.classList.remove('selected-opt')); document.querySelectorAll('.question-card').forEach(c => { c.style.borderColor = "#e2e8f0"; c.classList.remove('unsolved'); }); window.scrollTo({top:0,behavior:'smooth'}); } }
         function updateNumbers() { document.querySelectorAll('.q-number-badge').forEach((b, i) => b.innerText = `السؤال ${i+1}`); }
         function toggleType(s) { const c = s.closest('.question-card'); c.querySelector('.q-area').innerHTML = renderQArea(s.value,null); c.querySelector('.options-grid').innerHTML = renderOptions(s.value,null); saveAll(); }
         
