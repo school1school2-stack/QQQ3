@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
@@ -33,9 +34,10 @@
 
         .card-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .q-number-badge { background: var(--royal-blue); color: white; padding: 2px 15px; border-radius: 50px; font-weight: 900; font-size: 0.9rem; }
+        .type-label { font-size: 0.85rem; font-weight: 900; color: #3b82f6; background: #eff6ff; padding: 4px 12px; border-radius: 20px; }
         .type-select { background: #f1f5f9; border: none; padding: 8px; border-radius: 10px; font-weight: 700; font-family: 'Cairo'; cursor: pointer; }
 
-        .estieab-box { background: #fff9c4 !important; border: 2px solid #fbc02d; border-radius: 12px; padding: 15px; margin-bottom: 15px; color: #000; font-weight: 700; line-height: 1.8; width: 100%; box-sizing: border-box; text-align: right; height: auto; min-height: 100px; white-space: pre-wrap; }
+        .estieab-box { background: #fff9c4 !important; border: 2px solid #fbc02d; border-radius: 12px; padding: 15px; margin-bottom: 15px; color: #000; font-weight: 700; line-height: 1.8; width: 100%; box-sizing: border-box; text-align: right; min-height: 100px; height: auto; }
         .q-text-input { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; color: var(--q-red); font-weight: 900; font-size: 1.3rem; margin-bottom: 15px; outline: none; text-align: right; box-sizing: border-box; }
 
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -48,7 +50,6 @@
         .correct-ans-box { margin-top: 15px; padding: 10px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0; text-align: right; }
         .correct-input { width: 100%; background: transparent; border: none; outline: none; color: #166534; font-weight: 900; text-align: right; font-family: 'Cairo'; }
 
-        /* شريط التحكم (تطابق مع الصورة) */
         .controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-wrap: nowrap; gap: 8px; z-index: 1000; background: #1e293b; padding: 10px 15px; border-radius: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); align-items: center; width: max-content; }
         .btn { border: none; padding: 10px 18px; border-radius: 30px; font-weight: 800; cursor: pointer; color: white; display: flex; align-items: center; gap: 8px; transition: 0.3s; font-family: 'Cairo'; font-size: 0.9rem; white-space: nowrap; }
         .btn-add { background: #3b82f6; } .btn-save { background: #a855f7; } .btn-load { background: #4f46e5; }
@@ -167,7 +168,7 @@
         function renderOptions(t, d) {
             let h = ''; const labels = ['أ','ب','ج','د'];
             for(let i=0; i<4; i++) {
-                if(t==='tanazor') h+=`<div class="opt-pair-row"><span>${labels[i]}</span><input type="text" class="opt-word op1" placeholder="1" value="${d?.opt_pairs?.[i]?.[0] || ''}" oninput="saveAll()"><span style="color:red; font-weight:900"> : </span><input type="text" class="opt-word op2" placeholder="2" value="${d?.opt_pairs?.[i]?.[1] || ''}" oninput="saveAll()"></div>`;
+                if(t==='tanazor') h+=`<div class="opt-pair-row"><span>${labels[i]}</span><input type="text" class="opt-word op1" placeholder="1" value="${d?.opt_pair_val1?.[i] || ''}" oninput="saveAll()"><span style="color:red; font-weight:900"> : </span><input type="text" class="opt-word op2" placeholder="2" value="${d?.opt_pair_val2?.[i] || ''}" oninput="saveAll()"></div>`;
                 else h+=`<div class="opt-pair-row"><span>${labels[i]}</span><input type="text" class="opt-word opt" style="margin-right:10px" placeholder="خيار ${labels[i]}" value="${d?.opts?.[i]||''}" oninput="saveAll()"></div>`;
             }
             return h;
@@ -200,11 +201,11 @@
         function saveAll() {
             const qs = []; document.querySelectorAll('.question-card').forEach(c => {
                 const t = c.querySelector('.type-select').value; const a = c.querySelector('.ans-val').value; let d = { type: t, ans: a };
-                if (t === 'tanazor') { d.text1 = c.querySelector('.t1').value; d.text2 = c.querySelector('.t2').value; d.opt_pairs = Array.from(c.querySelectorAll('.opt-pair-row')).map(r => [r.querySelector('.op1').value, r.querySelector('.op2').value]); }
+                if (t === 'tanazor') { d.text1 = c.querySelector('.t1').value; d.text2 = c.querySelector('.t2').value; d.opt_pair_val1 = Array.from(c.querySelectorAll('.op1')).map(i => i.value); d.opt_pair_val2 = Array.from(c.querySelectorAll('.op2')).map(i => i.value); }
                 else { d.text = c.querySelector('.q-main')?.value || ""; if(t==='estieab') d.text_area = c.querySelector('.estieab-box').innerText; d.opts = Array.from(c.querySelectorAll('.opt')).map(i => i.value); }
                 qs.push(d);
             });
-            localStorage.setItem('fifi_v60_perfect', JSON.stringify(qs));
+            localStorage.setItem('fifi_v70_final', JSON.stringify(qs));
         }
 
         function loadQuestions() {
@@ -214,41 +215,36 @@
                 document.getElementById('student-actions').style.display = 'block';
                 loadSpecificExam(examId);
             } else {
-                const s = localStorage.getItem('fifi_v60_perfect');
+                const s = localStorage.getItem('fifi_v70_final');
                 if(s) { document.getElementById('quiz-content').innerHTML = ""; JSON.parse(s).forEach(q=>addQuestion(q)); }
             }
         }
 
         function clearAll() { if(confirm("مسح الكل؟")) { localStorage.clear(); document.getElementById('quiz-content').innerHTML = ""; } }
-        async function saveToCloud() { const n = prompt("اسم النموذج:"); if(n) { await db.ref('models/' + n).set({ teacher: "أ. عبدالعزيز الفيفي", data: JSON.parse(localStorage.getItem('fifi_v60_perfect')), date: new Date().toLocaleString() }); alert("تم الحفظ!"); } }
-        function loadFromCloud() { db.ref('models').once('value', s => { const ms = s.val(); if(ms) { const c = prompt("اختر النموذج:\n" + Object.keys(ms).join("\n")); if(c && ms[c]) { localStorage.setItem('fifi_v60_perfect', JSON.stringify(ms[c].data)); loadQuestions(); } } }); }
+        async function saveToCloud() { const n = prompt("اسم النموذج:"); if(n) { await db.ref('models/' + n).set({ teacher: "أ. عبدالعزيز الفيفي", data: JSON.parse(localStorage.getItem('fifi_v70_final')), date: new Date().toLocaleString() }); alert("تم الحفظ!"); } }
+        function loadFromCloud() { db.ref('models').once('value', s => { const ms = s.val(); if(ms) { const c = prompt("اختر النموذج:\n" + Object.keys(ms).join("\n")); if(c && ms[c]) { localStorage.setItem('fifi_v70_final', JSON.stringify(ms[c].data)); loadQuestions(); } } }); }
         function generateStudentLink() { const n = prompt("اسم النموذج:"); if(n) prompt("رابط الطلاب:", window.location.origin + window.location.pathname + "?exam=" + encodeURIComponent(n)); }
-        async function deleteFromCloud() { const n = prompt("اسم النموذج:"); if(n && confirm("حذف؟")) db.ref('models/' + n).remove().then(()=>alert("تم الحذف!")); }
+        async function deleteFromCloud() { const n = prompt("اسم النموذج للحذف:"); if(n && confirm("حذف نهائي؟")) db.ref('models/' + n).remove().then(()=>alert("تم الحذف!")); }
         function loadSpecificExam(id) { db.ref('models/' + id).once('value', s => { const exam = s.val(); if (exam) { document.getElementById('quiz-content').innerHTML = ""; exam.data.forEach(q => addQuestion(q)); } }); }
 
-        // --- دالة حفظ الصور الفائقة (3 أسئلة ملونة بكل صورة) ---
+        // --- دالة حفظ الصور الفائقة (3 أسئلة ملونة بكل صورة بدقة Scale 3) ---
         async function saveAsImages() {
             const cards = Array.from(document.querySelectorAll('.question-card'));
             if(cards.length === 0) return alert("لا توجد أسئلة!");
             
             for (let i = 0; i < cards.length; i += 3) {
                 const area = document.createElement('div');
-                // تنسيق الوعاء الخارجي لضمان نفس شكل المتصفح
-                area.style = "width:850px; padding:30px; background:#f8fafc; position:absolute; top:-9999px; left:0; direction:rtl; text-align:right;";
+                area.style = "width:850px; padding:30px; background:#f8fafc; position:absolute; top:-9999px; left:0; direction:rtl; text-align:right; box-sizing:border-box;";
                 
-                // إضافة الترويسة
                 const headerClone = document.getElementById('main-header').cloneNode(true);
                 area.appendChild(headerClone);
 
-                // إضافة مجموعة الأسئلة (3 أسئلة)
                 cards.slice(i, i + 3).forEach((orig, idx) => {
                     const clone = orig.cloneNode(true);
                     const type = orig.querySelector('.type-select').value;
                     
-                    // تنظيف الترويسة داخل السؤال (إخفاء القائمة المنسدلة والحذف)
                     clone.querySelector('.card-meta').innerHTML = `<span class="q-number-badge">السؤال ${i+idx+1}</span><span style="font-size:0.85rem; font-weight:900; color:#3b82f6; background:#eff6ff; padding:4px 12px; border-radius:20px; margin-right:15px;">${typeMap[type]}</span>`;
                     
-                    // استبدال حقول الإدخال بنصوص ثابتة مع الحفاظ على الألوان والتنسيق
                     if(type === 'tanazor') {
                         const t1 = orig.querySelector('.t1').value;
                         const t2 = orig.querySelector('.t2').value;
@@ -260,45 +256,39 @@
                             const op2 = origRow.querySelector('.op2').value;
                             const label = ['أ','ب','ج','د'][oIdx];
                             optRows[oIdx].innerHTML = `<span style="background:var(--royal-blue); color:white; padding:2px 8px; border-radius:5px; margin-left:10px;">${label}</span> <div style="display:flex; justify-content:center; width:100%; font-weight:900; font-size:1.2rem;"><span>${op1}</span><span style="margin:0 5px; color:#ef4444;"> : </span><span>${op2}</span></div>`;
+                            optRows[oIdx].style.border = "1.5px solid #d1d5db";
+                            optRows[oIdx].style.background = "white";
                         });
                     } else {
-                        // للأقسام العادية واستيعاب المقروء
                         clone.querySelectorAll('input, .estieab-box').forEach((inp, ii) => {
                             const val = inp.value || inp.innerText;
                             const style = window.getComputedStyle(inp);
                             const div = document.createElement('div');
                             div.innerText = val;
-                            div.style = `background:${style.backgroundColor}; color:${style.color}; padding:15px; border-radius:12px; font-weight:900; font-size:1.3rem; border:${style.border}; margin-bottom:15px; text-align:right; line-height:1.6;`;
+                            div.style = `background:${style.backgroundColor}; color:${style.color}; padding:15px; border-radius:12px; font-weight:900; font-size:1.3rem; border:${style.border}; margin-bottom:15px; text-align:right; line-height:1.6; min-height:40px;`;
                             inp.replaceWith(div);
                         });
                         
                         const optItems = clone.querySelectorAll('.opt-pair-row');
-                        orig.querySelectorAll('.opt-word').forEach((origOpt, oIdx) => {
+                        orig.querySelectorAll('.opt').forEach((origOpt, oIdx) => {
                             const label = ['أ','ب','ج','د'][oIdx];
                             optItems[oIdx].innerHTML = `<span style="background:var(--royal-blue); color:white; padding:2px 8px; border-radius:5px; margin-left:10px;">${label}</span> <span style="font-weight:900; font-size:1.1rem;">${origOpt.value}</span>`;
+                            optItems[oIdx].style.border = "1.5px solid #d1d5db";
+                            optItems[oIdx].style.background = "white";
                         });
                     }
                     
-                    // إزالة العناصر غير الضرورية في الصورة
                     clone.querySelectorAll('.remove-btn, .type-select, .correct-ans-box').forEach(e => e.remove());
                     area.appendChild(clone);
                 });
 
                 document.body.appendChild(area);
-                
-                // التقاط الصورة بجودة عالية جداً (Scale 3)
-                await html2canvas(area, { 
-                    scale: 3, 
-                    useCORS: true,
-                    backgroundColor: '#f8fafc',
-                    logging: false
-                }).then(canvas => {
+                await html2canvas(area, { scale: 3, useCORS: true, backgroundColor: '#f8fafc' }).then(canvas => {
                     const link = document.createElement('a');
                     link.download = `اختبار_الفيفي_مجموعة_${Math.floor(i/3)+1}.png`;
                     link.href = canvas.toDataURL("image/png");
                     link.click();
                 });
-                
                 document.body.removeChild(area);
             }
         }
