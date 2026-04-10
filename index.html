@@ -50,10 +50,11 @@
         .correct-ans-box { margin-top: 15px; padding: 10px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0; box-sizing: border-box; text-align: right; }
         .correct-input { width: 100%; background: transparent; border: none; outline: none; color: #166534; font-weight: 900; text-align: right; font-family: 'Cairo'; }
 
-        .controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 1000; background: rgba(30, 41, 59, 0.95); padding: 12px 20px; border-radius: 50px; backdrop-filter: blur(10px); width: max-content; }
+        .controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-wrap: wrap; gap: 8px; z-index: 1000; background: rgba(30, 41, 59, 0.95); padding: 12px 20px; border-radius: 50px; backdrop-filter: blur(10px); width: max-content; justify-content: center; }
         .btn { border: none; padding: 8px 15px; border-radius: 30px; font-weight: 800; cursor: pointer; color: white; display: flex; align-items: center; gap: 5px; transition: 0.3s; font-family: 'Cairo'; font-size: 0.85rem; }
         .btn-add { background: #3b82f6; } .btn-cloud-save { background: #a855f7; } .btn-cloud-load { background: #4f46e5; }
         .btn-cloud-delete { background: #f97316; } .btn-pdf { background: #ef4444; } .btn-img { background: #10b981; }
+        .btn-link { background: #06b6d4; } /* لون زر الرابط */
         .remove-btn { color: #cbd5e1; cursor: pointer; font-size: 1.2rem; }
 
         /* وضع الطالب */
@@ -78,6 +79,7 @@
         <button class="btn btn-add" onclick="addQuestion()"><i class="fas fa-plus"></i> سؤال</button>
         <button class="btn btn-cloud-save" onclick="saveToCloud()"><i class="fas fa-cloud-upload-alt"></i> حفظ</button>
         <button class="btn btn-cloud-load" onclick="loadFromCloud()"><i class="fas fa-cloud-download-alt"></i> فتح</button>
+        <button class="btn btn-link" onclick="generateStudentLink()"><i class="fas fa-link"></i> رابط الطلاب</button>
         <button class="btn btn-cloud-delete" onclick="deleteFromCloud()"><i class="fas fa-trash-alt"></i> حذف</button>
         <button class="btn btn-pdf" onclick="saveAsPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
         <button class="btn btn-img" onclick="saveAsImages()"><i class="fas fa-image"></i> صور</button>
@@ -117,6 +119,21 @@
                     exam.data.forEach(q => addQuestion(q));
                 } else {
                     alert("الاختبار غير موجود!");
+                }
+            });
+        }
+
+        function generateStudentLink() {
+            db.ref('models').once('value', s => {
+                const ms = s.val(); if(!ms) return alert("لا توجد نماذج محفوظة!");
+                const names = Object.keys(ms);
+                const name = prompt("اختر اسم النموذج لتوليد رابط الطلاب:\n\n" + names.join("\n"));
+                if (name && ms[name]) {
+                    const currentUrl = window.location.href.split('?')[0];
+                    const studentLink = currentUrl + "?exam=" + encodeURIComponent(name);
+                    prompt("انسخ رابط الطلاب المباشر من هنا:", studentLink);
+                } else if(name) {
+                    alert("الاسم غير موجود!");
                 }
             });
         }
@@ -198,9 +215,7 @@
             if (!name) return;
             try {
                 await db.ref('models/' + name).set({ teacher: "أ. عبدالعزيز الفيفي", data: collectData(), date: new Date().toLocaleString() });
-                const currentUrl = window.location.href.split('?')[0];
-                const studentLink = currentUrl + "?exam=" + encodeURIComponent(name);
-                prompt("تم الحفظ بنجاح! انسخ هذا الرابط وأرسله للطلاب ليدخلوا مباشرة:", studentLink);
+                alert("تم الحفظ بنجاح! يمكنك الآن الضغط على 'رابط الطلاب' لمشاركة الاختبار.");
             } catch (e) { alert("خطأ في الحفظ!"); }
         }
 
