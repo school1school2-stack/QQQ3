@@ -50,7 +50,7 @@
         .correct-ans-box { margin-top: 15px; padding: 10px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0; text-align: right; }
         .correct-input { width: 100%; background: transparent; border: none; outline: none; color: #166534; font-weight: 900; text-align: right; font-family: 'Cairo'; }
 
-        /* شريط التحكم (تطابق كامل مع صورتك) */
+        /* شريط التحكم المعتمد */
         .controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-wrap: nowrap; gap: 8px; z-index: 1000; background: #1e293b; padding: 10px 15px; border-radius: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); align-items: center; width: max-content; }
         .btn { border: none; padding: 10px 18px; border-radius: 30px; font-weight: 800; cursor: pointer; color: white; display: flex; align-items: center; gap: 8px; transition: 0.3s; font-family: 'Cairo'; font-size: 0.9rem; white-space: nowrap; }
         .btn-add { background: #3b82f6; } .btn-save { background: #a855f7; } .btn-load { background: #4f46e5; }
@@ -72,7 +72,7 @@
 
     <div id="modal-overlay" onclick="closeReport()"></div>
     <div id="report-modal">
-        <h2 style="text-align: center; color: var(--royal-blue);">تقرير تدريب القدرات 🎯</h2>
+        <h2 style="text-align: center; color: var(--royal-blue);">تقرير أداء الطالب 🎯</h2>
         <div id="score-summary" style="text-align: center; font-size: 1.4rem; font-weight: 900; margin: 20px 0;"></div>
         <table class="report-table">
             <thead>
@@ -132,7 +132,7 @@
             } else { loadQuestions(); }
         };
 
-        // --- دالة المحلل الذكي (النسخة الفائقة لمنع التصاق الحروف في التناظر وغيره) ---
+        // --- المحلل الذكي المطور (الفصل الإجباري للمسافات) ---
         function smartParse(textarea) {
             const text = textarea.value;
             const card = textarea.closest('.question-card');
@@ -158,11 +158,12 @@
                 const match = cleanText.match(patterns[key]);
                 if (match) {
                     let val = match[1].split(/[أ-ب-ج-د][\s\.\-\)\]\}]/)[0].trim();
-                    // تنظيف الحرف الملتصق في البداية (أ، ب، ج، د) وأي رموز ملحقة به
-                    val = val.replace(/^[أبجد][\s\.\-\)\]\}]*/, '').trim();
                     
+                    // تنظيف الحرف الملتصق وإجبار وضع مسافة
+                    val = val.replace(/^[أبجد][\s\.\-\)\]\}]*/, '').trim();
+
                     if (type === 'tanazor') {
-                        // تنظيف كلمات التناظر من أي رموز ملتصقة وإضافة مسافات
+                        // فصل الكلمات في التناظر بمسافة نظيفة حول النقطتين
                         const optPair = val.split(/[:\-\/]/);
                         const rowIdx = {a:0, b:1, c:2, d:3}[key];
                         if (optPair.length >= 2) {
@@ -184,7 +185,7 @@
             card.className = 'question-card';
             const type = data ? data.type : 'normal';
             card.innerHTML = `
-                <div class="smart-paste-area"><textarea class="smart-input" placeholder="الصق النص هنا للتوزيع النظيف..." oninput="smartParse(this)"></textarea></div>
+                <div class="smart-paste-area"><textarea class="smart-input" placeholder="الصق النص هنا للفصل التلقائي النظيف..." oninput="smartParse(this)"></textarea></div>
                 <div class="card-meta"><span class="q-number-badge"></span><select class="type-select" onchange="toggleType(this)">${Object.keys(typeMap).map(k=>`<option value="${k}" ${type===k?'selected':''}>${typeMap[k]}</option>`).join('')}</select></div>
                 <div class="q-area">${renderQArea(type, data)}</div>
                 <div class="options-grid">${renderOptions(type, data)}</div>
@@ -239,14 +240,14 @@
                 else { d.text = c.querySelector('.q-main')?.value || ""; if(t==='estieab') d.text_area = c.querySelector('.estieab-box').innerText; d.opts = Array.from(c.querySelectorAll('.opt-word.opt')).map(i => i.value); }
                 qs.push(d);
             });
-            localStorage.setItem('fifi_v30_final', JSON.stringify(qs));
+            localStorage.setItem('fifi_v31_final', JSON.stringify(qs));
         }
-        function loadQuestions() { const s = localStorage.getItem('fifi_v30_final'); if(s) JSON.parse(s).forEach(q=>addQuestion(q)); }
+        function loadQuestions() { const s = localStorage.getItem('fifi_v31_final'); if(s) JSON.parse(s).forEach(q=>addQuestion(q)); }
         function clearAll() { if(confirm("مسح الكل؟")) { localStorage.clear(); location.reload(); } }
-        async function saveToCloud() { const n = prompt("اسم النموذج:"); if(n) { await db.ref('models/' + n).set({ teacher: "أ. عبدالعزيز الفيفي", data: JSON.parse(localStorage.getItem('fifi_v30_final')), date: new Date().toLocaleString() }); alert("تم الحفظ!"); } }
-        function loadFromCloud() { db.ref('models').once('value', s => { const ms = s.val(); if(ms) { const c = prompt("اختر النموذج:\n" + Object.keys(ms).join("\n")); if(c && ms[c]) { localStorage.setItem('fifi_v30_final', JSON.stringify(ms[c].data)); location.reload(); } } }); }
+        async function saveToCloud() { const n = prompt("اسم النموذج:"); if(n) { await db.ref('models/' + n).set({ teacher: "أ. عبدالعزيز الفيفي", data: JSON.parse(localStorage.getItem('fifi_v31_final')), date: new Date().toLocaleString() }); alert("تم الحفظ!"); } }
+        function loadFromCloud() { db.ref('models').once('value', s => { const ms = s.val(); if(ms) { const c = prompt("اختر النموذج:\n" + Object.keys(ms).join("\n")); if(c && ms[c]) { localStorage.setItem('fifi_v31_final', JSON.stringify(ms[c].data)); location.reload(); } } }); }
         function generateStudentLink() { const n = prompt("اسم النموذج للرابط:"); if(n) prompt("رابط الطلاب:", window.location.origin + window.location.pathname + "?exam=" + encodeURIComponent(n)); }
-        async function deleteFromCloud() { const n = prompt("اسم النموذج للحذف:"); if(n && confirm("حذف نهائي؟")) db.ref('models/' + n).remove().then(()=>alert("تم!")); }
+        async function deleteFromCloud() { const n = prompt("اسم النموذج للحذف:"); if(n && confirm("حذف نهائي؟")) db.ref('models/' + n).remove().then(()=>alert("تم الحذف!")); }
         function loadSpecificExam(id) { db.ref('models/' + id).once('value', s => { const exam = s.val(); if (exam) { document.getElementById('quiz-content').innerHTML = ""; exam.data.forEach(q => addQuestion(q)); } }); }
         async function saveAsImages() { const c = document.getElementById('quiz-content'); await html2canvas(c, { scale: 2 }).then(canvas => { const l = document.createElement('a'); l.download = 'اختبار.png'; l.href = canvas.toDataURL(); l.click(); }); }
         function saveAsPDF() { const c = document.getElementById('quiz-content'); html2pdf().from(c).save(); }
