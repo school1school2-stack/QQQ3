@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة أ. عبدالعزيز الفيفي - التنسيق الذكي</title>
+    <title>منصة أ. عبدالعزيز الفيفي - التنسيق الشامل</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -48,6 +48,7 @@
         .correct-ans-box { margin-top: 15px; padding: 10px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0; text-align: right; }
         .correct-input { width: 100%; background: transparent; border: none; outline: none; color: #166534; font-weight: 900; text-align: right; font-family: 'Cairo'; }
 
+        /* شريط التحكم الأنيق (نفس صورتك) */
         .controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-wrap: nowrap; gap: 8px; z-index: 1000; background: #1e293b; padding: 10px 15px; border-radius: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); align-items: center; width: max-content; }
         .btn { border: none; padding: 10px 18px; border-radius: 30px; font-weight: 800; cursor: pointer; color: white; display: flex; align-items: center; gap: 8px; transition: 0.3s; font-family: 'Cairo'; font-size: 0.9rem; white-space: nowrap; }
         .btn-add { background: #3b82f6; } .btn-save { background: #a855f7; } .btn-load { background: #4f46e5; }
@@ -69,7 +70,7 @@
 
     <div id="modal-overlay" onclick="closeReport()"></div>
     <div id="report-modal">
-        <h2 style="text-align: center; color: var(--royal-blue);">تقرير تدريب القدرات 🎯</h2>
+        <h2 style="text-align: center; color: var(--royal-blue);">تقرير أداء الطالب 🎯</h2>
         <div id="score-summary" style="text-align: center; font-size: 1.4rem; font-weight: 900; margin: 20px 0;"></div>
         <table class="report-table">
             <thead>
@@ -128,49 +129,49 @@
             } else { loadQuestions(); }
         };
 
-        // --- المحلل الذكي المطور (تجاهل الكلمات التوضيحية وفصل نظيف للتناظر) ---
+        // --- المحلل الذكي "الحر" (يعمل مع أي نص يحتوي على أزواج تناظر) ---
         function smartParse(textarea) {
             const text = textarea.value;
             const card = textarea.closest('.question-card');
             const type = card.querySelector('.type-select').value;
             
-            // تنظيف النص من أرقام الأسئلة والكلمات التوضيحية
+            // تنظيف النص من الشوائب الإرشادية
             let cleanText = text.replace(/السؤال[:\s]*/g, '').replace(/الخيارات[:\s]*/g, '').replace(/^\d+[\s\.\-\)]+/, '').trim();
 
-            const splitRegex = /[\s\(\[\{]?[أا][\s\.\-\)\]\}]+/;
-            const questionPart = cleanText.split(splitRegex)[0].trim();
-
             if (type === 'tanazor') {
-                const qPair = questionPart.split(/[:\-\/]/);
-                if (qPair.length >= 2) {
-                    card.querySelector('.t1').value = qPair[0].trim();
-                    card.querySelector('.t2').value = qPair[1].trim();
-                }
-            } else {
-                card.querySelector('.q-main').value = questionPart;
-            }
+                // استخراج جميع أزواج الكلمات التي بينها نقطتان (:)
+                const pairs = cleanText.match(/[^\sأ-د\(\)\]\}\.\-\:\/]+\s*[:\-\/]\s*[^\sأ-د\(\)\]\}\.\-\:\/]+/g);
+                
+                if (pairs && pairs.length > 0) {
+                    // أول زوج هو السؤال
+                    const qParts = pairs[0].split(/[:\-\/]/);
+                    card.querySelector('.t1').value = qParts[0].trim();
+                    card.querySelector('.t2').value = qParts[1].trim();
 
-            const patterns = { a: /[أا][\s\.\-\)\]\}]+([^ب]+)/, b: /ب[\s\.\-\)\]\}]+([^ج]+)/, c: /ج[\s\.\-\)\]\}]+([^د]+)/, d: /د[\s\.\-\)\]\}]+(.*)/ };
-            Object.keys(patterns).forEach(key => {
-                const match = cleanText.match(patterns[key]);
-                if (match) {
-                    let val = match[1].split(/[أ-ب-ج-د][\s\.\-\)\]\}]/)[0].trim();
-                    val = val.replace(/^[أبجد][\s\.\-\)\]\}]*/, '').trim();
-
-                    if (type === 'tanazor') {
-                        const optPair = val.split(/[:\-\/]/);
-                        const rowIdx = {a:0, b:1, c:2, d:3}[key];
-                        const rows = card.querySelectorAll('.opt-pair-row');
-                        if (optPair.length >= 2) {
-                            rows[rowIdx].querySelector('.op1').value = optPair[0].trim();
-                            rows[rowIdx].querySelector('.op2').value = optPair[1].trim();
-                        }
-                    } else {
-                        const target = card.querySelector('.opt-' + key);
-                        if(target) target.value = val;
+                    // بقية الأزواج هي الخيارات
+                    const rows = card.querySelectorAll('.opt-pair-row');
+                    for (let i = 1; i < pairs.length && i <= 4; i++) {
+                        const optParts = pairs[i].split(/[:\-\/]/);
+                        rows[i-1].querySelector('.op1').value = optParts[0].trim();
+                        rows[i-1].querySelector('.op2').value = optParts[1].trim();
                     }
                 }
-            });
+            } else {
+                // للأقسام الأخرى: نبحث عن السؤال ثم الخيارات المرمزة (أ، ب، ج، د)
+                const splitRegex = /[\s\(\[\{]?[أا][\s\.\-\)\]\}]+/;
+                const questionPart = cleanText.split(splitRegex)[0].trim();
+                card.querySelector('.q-main').value = questionPart;
+
+                const patterns = { a: /[أا][\s\.\-\)\]\}]+([^ب]+)/, b: /ب[\s\.\-\)\]\}]+([^ج]+)/, c: /ج[\s\.\-\)\]\}]+([^د]+)/, d: /د[\s\.\-\)\]\}]+(.*)/ };
+                Object.keys(patterns).forEach(key => {
+                    const match = cleanText.match(patterns[key]);
+                    if (match) {
+                        let val = match[1].split(/[أ-ب-ج-د][\s\.\-\)\]\}]/)[0].trim();
+                        val = val.replace(/^[أبجد][\s\.\-\)\]\}]*/, '').trim();
+                        card.querySelector('.opt-' + key).value = val;
+                    }
+                });
+            }
             saveAll();
         }
 
@@ -180,7 +181,7 @@
             card.className = 'question-card';
             const type = data ? data.type : 'normal';
             card.innerHTML = `
-                <div class="smart-paste-area"><textarea class="smart-input" placeholder="الصق السؤال والخيارات هنا..." oninput="smartParse(this)"></textarea></div>
+                <div class="smart-paste-area"><textarea class="smart-input" placeholder="الصق أي نص يحتوي على أزواج تناظر..." oninput="smartParse(this)"></textarea></div>
                 <div class="card-meta"><span class="q-number-badge"></span><select class="type-select" onchange="toggleType(this)">${Object.keys(typeMap).map(k=>`<option value="${k}" ${type===k?'selected':''}>${typeMap[k]}</option>`).join('')}</select></div>
                 <div class="q-area">${renderQArea(type, data)}</div>
                 <div class="options-grid">${renderOptions(type, data)}</div>
@@ -231,15 +232,15 @@
             const qs = []; document.querySelectorAll('.question-card').forEach(c => {
                 const t = c.querySelector('.type-select').value; const a = c.querySelector('.ans-val').value; let d = { type: t, ans: a };
                 if (t === 'tanazor') { d.text1 = c.querySelector('.t1').value; d.text2 = c.querySelector('.t2').value; d.opt_pairs = Array.from(c.querySelectorAll('.opt-pair-row')).map(r => [r.querySelector('.op1').value, r.querySelector('.op2').value]); }
-                else { d.text = c.querySelector('.q-main')?.value || ""; if(t==='estieab') d.text_area = c.querySelector('.estieab-box')?.innerText || ""; d.opts = Array.from(c.querySelectorAll('.opt-word.opt')).map(i => i.value); }
+                else { d.text = c.querySelector('.q-main')?.value || ""; d.opts = Array.from(c.querySelectorAll('.opt-word.opt')).map(i => i.value); }
                 qs.push(d);
             });
-            localStorage.setItem('fifi_v33_final', JSON.stringify(qs));
+            localStorage.setItem('fifi_v35_final', JSON.stringify(qs));
         }
-        function loadQuestions() { const s = localStorage.getItem('fifi_v33_final'); if(s) JSON.parse(s).forEach(q=>addQuestion(q)); }
+        function loadQuestions() { const s = localStorage.getItem('fifi_v35_final'); if(s) JSON.parse(s).forEach(q=>addQuestion(q)); }
         function clearAll() { if(confirm("مسح الكل؟")) { localStorage.clear(); location.reload(); } }
-        async function saveToCloud() { const n = prompt("اسم النموذج:"); if(n) { await db.ref('models/' + n).set({ teacher: "أ. عبدالعزيز الفيفي", data: JSON.parse(localStorage.getItem('fifi_v33_final')), date: new Date().toLocaleString() }); alert("تم الحفظ!"); } }
-        function loadFromCloud() { db.ref('models').once('value', s => { const ms = s.val(); if(ms) { const c = prompt("اختر النموذج:\n" + Object.keys(ms).join("\n")); if(c && ms[c]) { localStorage.setItem('fifi_v33_final', JSON.stringify(ms[c].data)); location.reload(); } } }); }
+        async function saveToCloud() { const n = prompt("اسم النموذج:"); if(n) { await db.ref('models/' + n).set({ teacher: "أ. عبدالعزيز الفيفي", data: JSON.parse(localStorage.getItem('fifi_v35_final')), date: new Date().toLocaleString() }); alert("تم الحفظ!"); } }
+        function loadFromCloud() { db.ref('models').once('value', s => { const ms = s.val(); if(ms) { const c = prompt("اختر النموذج:\n" + Object.keys(ms).join("\n")); if(c && ms[c]) { localStorage.setItem('fifi_v35_final', JSON.stringify(ms[c].data)); location.reload(); } } }); }
         function generateStudentLink() { const n = prompt("اسم النموذج للرابط:"); if(n) prompt("رابط الطلاب:", window.location.origin + window.location.pathname + "?exam=" + encodeURIComponent(n)); }
         async function deleteFromCloud() { const n = prompt("اسم النموذج للحذف:"); if(n && confirm("حذف نهائي؟")) db.ref('models/' + n).remove().then(()=>alert("تم!")); }
         function loadSpecificExam(id) { db.ref('models/' + id).once('value', s => { const exam = s.val(); if (exam) { document.getElementById('quiz-content').innerHTML = ""; exam.data.forEach(q => addQuestion(q)); } }); }
