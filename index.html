@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة أ. عبدالعزيز الفيفي - التنسيق الذكي</title>
+    <title>منصة أ. عبدالعزيز الفيفي - التنسيق المطور</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -26,7 +26,7 @@
         .school-name { margin: 0; color: #64748b; font-weight: 700; font-size: 1rem; }
         .logo-box { background: var(--royal-blue); width: 55px; height: 55px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; }
 
-        .container { width: 100%; max-width: 850px; padding-bottom: 100px; }
+        .container { width: 100%; max-width: 850px; padding-bottom: 120px; }
         .question-card { background: white; border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 2px solid #e2e8f0; position: relative; text-align: right; box-sizing: border-box; transition: 0.3s; }
         .question-card::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: var(--royal-blue); }
 
@@ -50,8 +50,8 @@
         .correct-ans-box { margin-top: 15px; padding: 10px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0; text-align: right; }
         .correct-input { width: 100%; background: transparent; border: none; outline: none; color: #166534; font-weight: 900; text-align: right; font-family: 'Cairo'; }
 
-        /* شريط التحكم (تطابق كامل مع الصورة) */
-        .controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-wrap: nowrap; gap: 8px; z-index: 1000; background: #1e293b; padding: 10px 15px; border-radius: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); align-items: center; }
+        /* شريط التحكم الأنيق (صورتك) */
+        .controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-wrap: nowrap; gap: 8px; z-index: 1000; background: #1e293b; padding: 10px 15px; border-radius: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); align-items: center; width: max-content; }
         .btn { border: none; padding: 10px 18px; border-radius: 30px; font-weight: 800; cursor: pointer; color: white; display: flex; align-items: center; gap: 8px; transition: 0.3s; font-family: 'Cairo'; font-size: 0.9rem; white-space: nowrap; }
         .btn-add { background: #3b82f6; } .btn-save { background: #a855f7; } .btn-load { background: #4f46e5; }
         .btn-link { background: #06b6d4; } .btn-del { background: #f97316; } .btn-pdf { background: #ef4444; }
@@ -109,6 +109,7 @@
 
     <script>
         const typeMap = { 'normal': 'إكمال جمل / خطأ سياقي', 'tanazor': 'تناظر لفظي ( : )', 'estieab': 'استيعاب المقروء', 'shaza': 'المفردة الشاذة', 'irtibat': 'الارتباط والاختلاف' };
+        
         const firebaseConfig = {
             apiKey: "AIzaSyAVrIim7aXjg0hGrMk0qVrXT8geRIpHoBk",
             authDomain: "youy-apps.firebaseapp.com",
@@ -131,15 +132,16 @@
             } else { loadQuestions(); }
         };
 
-        // --- المحلل الذكي المطور (تنظيف ملتصقات الحروف والرموز) ---
+        // --- دالة المحلل الذكي (النسخة الفائقة لمنع التصاق الحروف) ---
         function smartParse(textarea) {
             const text = textarea.value;
             const card = textarea.closest('.question-card');
             const type = card.querySelector('.type-select').value;
+            
             let cleanText = text.replace(/^\d+[\s\.\-\)]+/, '').trim();
-
             const splitRegex = /[\s\(\[\{]?[أا][\s\.\-\)\]\}]+/;
-            const questionPart = cleanText.split(splitRegex)[0].trim();
+            const parts = cleanText.split(splitRegex);
+            const questionPart = parts[0].trim();
 
             if (type === 'tanazor') {
                 const pair = questionPart.split(/[:\-\/]/);
@@ -156,8 +158,8 @@
                 const match = cleanText.match(patterns[key]);
                 if (match) {
                     let val = match[1].split(/[أ-ب-ج-د][\s\.\-\)\]\}]/)[0].trim();
-                    // تنظيف أي التصاق لرموز الخيارات من بداية النص
-                    val = val.replace(/^[أ-د][\s\.\-\)\]\}]+/, '').trim();
+                    // تنظيف الحرف الملتصق في البداية (أ، ب، ج، د) وأي رموز ملحقة به
+                    val = val.replace(/^[أبجد][\s\.\-\)\]\}]*/, '').trim();
                     
                     if (type === 'tanazor') {
                         const optPair = val.split(/[:\-\/]/);
@@ -181,7 +183,7 @@
             card.className = 'question-card';
             const type = data ? data.type : 'normal';
             card.innerHTML = `
-                <div class="smart-paste-area"><textarea class="smart-input" placeholder="الصق النص هنا لتحليله تلقائياً..." oninput="smartParse(this)"></textarea></div>
+                <div class="smart-paste-area"><textarea class="smart-input" placeholder="الصق النص هنا للتوزيع النظيف..." oninput="smartParse(this)"></textarea></div>
                 <div class="card-meta"><span class="q-number-badge"></span><select class="type-select" onchange="toggleType(this)">${Object.keys(typeMap).map(k=>`<option value="${k}" ${type===k?'selected':''}>${typeMap[k]}</option>`).join('')}</select></div>
                 <div class="q-area">${renderQArea(type, data)}</div>
                 <div class="options-grid">${renderOptions(type, data)}</div>
@@ -211,6 +213,7 @@
             return h;
         }
 
+        // --- بقية الوظائف الأساسية ---
         function gradeExam() {
             let s = 0; const cards = document.querySelectorAll('.question-card'); const report = document.getElementById('report-body'); report.innerHTML = "";
             document.body.classList.add('locked-mode'); document.getElementById('main-grade-btn').disabled = true;
@@ -236,12 +239,12 @@
                 else { d.text = c.querySelector('.q-main')?.value || ""; if(t==='estieab') d.text_area = c.querySelector('.estieab-box').innerText; d.opts = Array.from(c.querySelectorAll('.opt-word.opt')).map(i => i.value); }
                 qs.push(d);
             });
-            localStorage.setItem('fifi_v29_final', JSON.stringify(qs));
+            localStorage.setItem('fifi_v30_final', JSON.stringify(qs));
         }
-        function loadQuestions() { const s = localStorage.getItem('fifi_v29_final'); if(s) JSON.parse(s).forEach(q=>addQuestion(q)); }
+        function loadQuestions() { const s = localStorage.getItem('fifi_v30_final'); if(s) JSON.parse(s).forEach(q=>addQuestion(q)); }
         function clearAll() { if(confirm("مسح الكل؟")) { localStorage.clear(); location.reload(); } }
-        async function saveToCloud() { const n = prompt("اسم النموذج:"); if(n) { await db.ref('models/' + n).set({ teacher: "أ. عبدالعزيز الفيفي", data: JSON.parse(localStorage.getItem('fifi_v29_final')), date: new Date().toLocaleString() }); alert("تم الحفظ!"); } }
-        function loadFromCloud() { db.ref('models').once('value', s => { const ms = s.val(); if(ms) { const c = prompt("اختر النموذج:\n" + Object.keys(ms).join("\n")); if(c && ms[c]) { localStorage.setItem('fifi_v29_final', JSON.stringify(ms[c].data)); location.reload(); } } }); }
+        async function saveToCloud() { const n = prompt("اسم النموذج:"); if(n) { await db.ref('models/' + n).set({ teacher: "أ. عبدالعزيز الفيفي", data: JSON.parse(localStorage.getItem('fifi_v30_final')), date: new Date().toLocaleString() }); alert("تم الحفظ!"); } }
+        function loadFromCloud() { db.ref('models').once('value', s => { const ms = s.val(); if(ms) { const c = prompt("اختر النموذج:\n" + Object.keys(ms).join("\n")); if(c && ms[c]) { localStorage.setItem('fifi_v30_final', JSON.stringify(ms[c].data)); location.reload(); } } }); }
         function generateStudentLink() { const n = prompt("اسم النموذج للرابط:"); if(n) prompt("رابط الطلاب:", window.location.origin + window.location.pathname + "?exam=" + encodeURIComponent(n)); }
         async function deleteFromCloud() { const n = prompt("اسم النموذج للحذف:"); if(n && confirm("حذف نهائي؟")) db.ref('models/' + n).remove().then(()=>alert("تم!")); }
         function loadSpecificExam(id) { db.ref('models/' + id).once('value', s => { const exam = s.val(); if (exam) { document.getElementById('quiz-content').innerHTML = ""; exam.data.forEach(q => addQuestion(q)); } }); }
