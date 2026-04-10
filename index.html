@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة أ. عبدالعزيز الفيفي - المحلل الذكي الشامل</title>
+    <title>منصة أ. عبدالعزيز الفيفي - النسخة المتكاملة</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -30,9 +30,8 @@
         .question-card { background: white; border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 2px solid #e2e8f0; position: relative; text-align: right; box-sizing: border-box; transition: 0.3s; }
         .question-card::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: var(--royal-blue); }
 
-        /* منطقة المحلل الذكي المحدثة */
         .smart-paste-area { background: #fff3e0; border: 2px dashed #ff9800; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
-        .smart-input { width: 100%; height: 80px; border: none; background: transparent; font-family: 'Cairo'; font-size: 1rem; resize: none; outline: none; text-align: right; font-weight: bold; }
+        .smart-input { width: 100%; height: 70px; border: none; background: transparent; font-family: 'Cairo'; font-size: 1rem; resize: none; outline: none; text-align: right; font-weight: bold; }
 
         .card-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .q-number-badge { background: var(--royal-blue); color: white; padding: 2px 15px; border-radius: 50px; font-weight: 900; font-size: 0.9rem; }
@@ -130,29 +129,20 @@
             } else { loadQuestions(); }
         };
 
-        // --- دالة المحلل الذكي الشاملة المحدثة ---
         function smartParse(textarea) {
             const text = textarea.value;
             const card = textarea.closest('.question-card');
-            
-            // تنظيف النص من أرقام الأسئلة في البداية
             let cleanText = text.replace(/^\d+[\s\.\-\)]+/, '').trim();
-
-            // تقسيم النص لاستخراج السؤال (كل ما قبل أول خيار أ أو أ)
-            // ندعم الحرف "أ" والحرف "ا" بشتى أنواع الأقواس والرموز
             const splitRegex = /[\s\(\[\{]?[أا][\s\.\-\)\]\}]+/;
             const parts = cleanText.split(splitRegex);
             const questionPart = parts[0].trim();
             if(questionPart) card.querySelector('.q-main').value = questionPart;
-
-            // استخراج الخيارات بذكاء سواء كانت في سطر واحد أو أسطر منفصلة
             const patterns = {
                 a: /[أا][\s\.\-\)\]\}]+([^ب]+)/,
                 b: /ب[\s\.\-\)\]\}]+([^ج]+)/,
                 c: /ج[\s\.\-\)\]\}]+([^د]+)/,
                 d: /د[\s\.\-\)\]\}]+(.*)/
             };
-
             Object.keys(patterns).forEach(key => {
                 const match = cleanText.match(patterns[key]);
                 if(match) {
@@ -169,7 +159,7 @@
             card.className = 'question-card';
             const type = data ? data.type : 'normal';
             card.innerHTML = `
-                <div class="smart-paste-area"><textarea class="smart-input" placeholder="الصق السؤال والخيارات هنا (مثال: العلم نور؟ أ- نعم ب- لا ج- ربما د- ليس دائماً)" oninput="smartParse(this)"></textarea></div>
+                <div class="smart-paste-area"><textarea class="smart-input" placeholder="الصق السؤال والخيارات هنا..." oninput="smartParse(this)"></textarea></div>
                 <div class="card-meta"><span class="q-number-badge"></span><select class="type-select" onchange="toggleType(this)">${Object.keys(typeMap).map(k=>`<option value="${k}" ${type===k?'selected':''}>${typeMap[k]}</option>`).join('')}</select></div>
                 <div class="q-area">${renderQArea(type, data)}</div>
                 <div class="options-grid">${renderOptions(type, data)}</div>
@@ -218,6 +208,7 @@
         function resetExam() { if(confirm("إعادة الاختبار؟")) { document.body.classList.remove('locked-mode'); document.getElementById('main-grade-btn').disabled = false; document.querySelectorAll('.opt-pair-row').forEach(r => r.classList.remove('selected-opt')); document.querySelectorAll('.question-card').forEach(c => c.style.borderColor = "#e2e8f0"); window.scrollTo({top:0,behavior:'smooth'}); } }
         function updateNumbers() { document.querySelectorAll('.q-number-badge').forEach((b, i) => b.innerText = `السؤال ${i+1}`); }
         function toggleType(s) { const c = s.closest('.question-card'); c.querySelector('.q-area').innerHTML = renderQArea(s.value,null); c.querySelector('.options-grid').innerHTML = renderOptions(s.value,null); saveAll(); }
+        
         function saveAll() {
             const qs = []; document.querySelectorAll('.question-card').forEach(c => {
                 const t = c.querySelector('.type-select').value; const a = c.querySelector('.ans-val').value; let d = { type: t, ans: a };
@@ -231,7 +222,7 @@
         async function saveToCloud() { const n = prompt("اسم النموذج:"); if(n) { await db.ref('models/' + n).set({ teacher: "أ. عبدالعزيز الفيفي", data: JSON.parse(localStorage.getItem('fifi_v26_all')), date: new Date().toLocaleString() }); alert("تم الحفظ بنجاح!"); } }
         function loadFromCloud() { db.ref('models').once('value', s => { const ms = s.val(); if(ms) { const c = prompt("اختر النموذج:\n" + Object.keys(ms).join("\n")); if(c && ms[c]) { localStorage.setItem('fifi_v26_all', JSON.stringify(ms[c].data)); location.reload(); } } }); }
         function generateStudentLink() { const n = prompt("اسم النموذج للرابط:"); if(n) prompt("رابط الطلاب:", window.location.origin + window.location.pathname + "?exam=" + encodeURIComponent(n)); }
-        async function deleteFromCloud() { const n = prompt("اسم النموذج للحذف:"); if(n && confirm("حذف نهائي؟")) db.ref('models/' + n).remove().then(()=>alert("تم!")); }
+        async function deleteFromCloud() { const n = prompt("اسم النموذج للحذف:"); if(n && confirm("حذف نهائي؟")) db.ref('models/' + n).remove().then(()=>alert("تم الحذف!")); }
         function loadSpecificExam(id) { db.ref('models/' + id).once('value', s => { const exam = s.val(); if (exam) { document.getElementById('quiz-content').innerHTML = ""; exam.data.forEach(q => addQuestion(q)); } }); }
     </script>
 </body>
