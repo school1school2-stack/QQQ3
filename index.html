@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة أ. عبدالعزيز الفيفي - الإدارة السحابية</title>
+    <title>منصة أ. عبدالعزيز الفيفي - القدرات</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -16,7 +16,6 @@
         :root { --royal-blue: #1e3a8a; --q-red: #ef4444; --bg-page: #f8fafc; }
         body { font-family: 'Cairo', sans-serif; background: var(--bg-page); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
 
-        /* ترويسة الفيفي: توازن تام */
         .user-header {
             width: 100%; max-width: 850px; background: white; border-radius: 15px; padding: 20px;
             display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
@@ -41,8 +40,9 @@
         .q-text-input { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; color: var(--q-red); font-weight: 900; font-size: 1.3rem; margin-bottom: 15px; outline: none; text-align: right; box-sizing: border-box; }
         
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .opt-pair-row { display: flex; align-items: center; background: white; border: 1.5px solid #d1d5db; border-radius: 10px; padding: 8px; box-sizing: border-box; }
-        .opt-word { width: 100%; border: none; outline: none; font-weight: 900; color: #000; background: transparent; text-align: right; font-family: 'Cairo'; }
+        .opt-pair-row { display: flex; align-items: center; background: white; border: 1.5px solid #d1d5db; border-radius: 10px; padding: 8px; box-sizing: border-box; cursor: pointer; transition: 0.2s; }
+        .opt-pair-row:hover { background: #f1f5f9; }
+        .opt-word { width: 100%; border: none; outline: none; font-weight: 900; color: #000; background: transparent; text-align: right; font-family: 'Cairo'; cursor: inherit; }
 
         .pair-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; background: #fff1f2; padding: 15px; border-radius: 12px; border: 1.5px dashed #fca5a5; width: 100%; box-sizing: border-box; }
         .pair-word { width: 45%; text-align: center; border: none; background: white; padding: 10px; border-radius: 8px; color: var(--q-red); font-weight: 900; font-size: 1.3rem; }
@@ -50,16 +50,18 @@
         .correct-ans-box { margin-top: 15px; padding: 10px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0; box-sizing: border-box; text-align: right; }
         .correct-input { width: 100%; background: transparent; border: none; outline: none; color: #166534; font-weight: 900; text-align: right; font-family: 'Cairo'; }
 
-        /* شريط التحكم المطور */
         .controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 1000; background: rgba(30, 41, 59, 0.95); padding: 12px 20px; border-radius: 50px; backdrop-filter: blur(10px); width: max-content; }
         .btn { border: none; padding: 8px 15px; border-radius: 30px; font-weight: 800; cursor: pointer; color: white; display: flex; align-items: center; gap: 5px; transition: 0.3s; font-family: 'Cairo'; font-size: 0.85rem; }
-        .btn-add { background: #3b82f6; }
-        .btn-cloud-save { background: #a855f7; }
-        .btn-cloud-load { background: #4f46e5; }
-        .btn-cloud-delete { background: #f97316; } /* زر الحذف */
-        .btn-pdf { background: #ef4444; }
-        .btn-img { background: #10b981; }
+        .btn-add { background: #3b82f6; } .btn-cloud-save { background: #a855f7; } .btn-cloud-load { background: #4f46e5; }
+        .btn-cloud-delete { background: #f97316; } .btn-pdf { background: #ef4444; } .btn-img { background: #10b981; }
         .remove-btn { color: #cbd5e1; cursor: pointer; font-size: 1.2rem; }
+
+        /* وضع الطالب */
+        body.student-mode .controls, 
+        body.student-mode .remove-btn, 
+        body.student-mode .type-select,
+        body.student-mode .correct-ans-box { display: none !important; }
+        body.student-mode .selected-opt { background: #dbeafe !important; border-color: #3b82f6 !important; }
     </style>
 </head>
 <body>
@@ -72,11 +74,11 @@
 
     <div class="container" id="quiz-content"></div>
 
-    <div class="controls">
+    <div class="controls" id="admin-controls">
         <button class="btn btn-add" onclick="addQuestion()"><i class="fas fa-plus"></i> سؤال</button>
-        <button class="btn btn-cloud-save" title="حفظ في السحابة" onclick="saveToCloud()"><i class="fas fa-cloud-upload-alt"></i> حفظ</button>
-        <button class="btn btn-cloud-load" title="فتح من السحابة" onclick="loadFromCloud()"><i class="fas fa-cloud-download-alt"></i> فتح</button>
-        <button class="btn btn-cloud-delete" title="حذف نموذج من السحابة" onclick="deleteFromCloud()"><i class="fas fa-trash-alt"></i> حذف</button>
+        <button class="btn btn-cloud-save" onclick="saveToCloud()"><i class="fas fa-cloud-upload-alt"></i> حفظ</button>
+        <button class="btn btn-cloud-load" onclick="loadFromCloud()"><i class="fas fa-cloud-download-alt"></i> فتح</button>
+        <button class="btn btn-cloud-delete" onclick="deleteFromCloud()"><i class="fas fa-trash-alt"></i> حذف</button>
         <button class="btn btn-pdf" onclick="saveAsPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
         <button class="btn btn-img" onclick="saveAsImages()"><i class="fas fa-image"></i> صور</button>
         <button class="btn" style="background:#64748b" onclick="clearAll()"><i class="fas fa-eraser"></i></button>
@@ -84,8 +86,6 @@
 
     <script>
         const typeMap = { 'normal': 'إكمال جمل / خطأ سياقي', 'tanazor': 'تناظر لفظي ( : )', 'estieab': 'استيعاب المقروء', 'shaza': 'المفردة الشاذة', 'irtibat': 'الارتباط والاختلاف' };
-
-        // --- إعدادات Firebase الخاصة بمشروعك Youy-apps ---
         const firebaseConfig = {
             apiKey: "AIzaSyAVrIim7aXjg0hGrMk0qVrXT8geRIpHoBk",
             authDomain: "youy-apps.firebaseapp.com",
@@ -99,7 +99,27 @@
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        window.onload = loadQuestions;
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const examId = urlParams.get('exam');
+            if (examId) {
+                document.body.classList.add('student-mode');
+                loadSpecificExam(examId);
+            } else {
+                loadQuestions();
+            }
+        };
+
+        function loadSpecificExam(id) {
+            db.ref('models/' + id).once('value', s => {
+                const exam = s.val();
+                if (exam) {
+                    exam.data.forEach(q => addQuestion(q));
+                } else {
+                    alert("الاختبار غير موجود!");
+                }
+            });
+        }
 
         function updateNumbers() {
             document.querySelectorAll('.question-card').forEach((card, index) => {
@@ -116,7 +136,7 @@
 
             card.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div class="card-meta"><span class="q-number-badge"></span><select class="type-select" onchange="toggleType(this)">${Object.keys(typeMap).map(k=>`<option value="${k}" ${type===k?'selected':''}>${typeMap[k]}</option>`).join('')}</select></div>
+                    <div class="card-meta"><span class="q-number-badge"></span><span class="type-label student-only" style="${document.body.classList.contains('student-mode')?'display:inline-block':'display:none'}">${typeMap[type]}</span><select class="type-select" onchange="toggleType(this)">${Object.keys(typeMap).map(k=>`<option value="${k}" ${type===k?'selected':''}>${typeMap[k]}</option>`).join('')}</select></div>
                     <i class="fas fa-times-circle remove-btn" onclick="removeQuestion(this)"></i>
                 </div>
                 <div class="q-area">${renderQArea(type, data)}</div>
@@ -124,14 +144,24 @@
                 <div class="correct-ans-box"><input type="text" placeholder="الإجابة النموذجية..." class="correct-input ans-val" value="${data?data.ans||'':''}" oninput="saveAll()"></div>
             `;
             container.appendChild(card);
+            
+            card.querySelectorAll('.opt-pair-row').forEach(row => {
+                row.onclick = () => {
+                    if (document.body.classList.contains('student-mode')) {
+                        card.querySelectorAll('.opt-pair-row').forEach(r => r.classList.remove('selected-opt'));
+                        row.classList.add('selected-opt');
+                    }
+                };
+            });
+
             updateNumbers();
-            saveAll();
+            if(!document.body.classList.contains('student-mode')) saveAll();
         }
 
         function renderQArea(t, d) {
-            if (t === 'tanazor') return `<div class="pair-row"><input type="text" placeholder="2" class="pair-word t2" value="${d?d.text2:''}" oninput="saveAll()"><span style="color:red; font-weight:900; font-size:1.5rem"> : </span><input type="text" placeholder="1" class="pair-word t1" value="${d?d.text1:''}" oninput="saveAll()"></div>`;
-            if (t === 'estieab') return `<textarea class="estieab-box t-area" style="height:100px; width:100%; font-family:Cairo; resize:none;" placeholder="نص القطعة..." oninput="saveAll()">${d?d.text_area:''}</textarea><input type="text" placeholder="السؤال..." class="q-text-input q-main" value="${d?d.text:''}" oninput="saveAll()">`;
-            return `<input type="text" placeholder="اكتب السؤال هنا..." class="q-text-input q-main" value="${d?d.text:''}" oninput="saveAll()">`;
+            if (t === 'tanazor') return `<div class="pair-row"><input type="text" class="pair-word t2" value="${d?d.text2:''}" oninput="saveAll()"><span style="color:red; font-weight:900; font-size:1.5rem"> : </span><input type="text" class="pair-word t1" value="${d?d.text1:''}" oninput="saveAll()"></div>`;
+            if (t === 'estieab') return `<textarea class="estieab-box t-area" style="height:100px; width:100%; font-family:Cairo; resize:none;" oninput="saveAll()">${d?d.text_area:''}</textarea><input type="text" class="q-text-input q-main" value="${d?d.text:''}" oninput="saveAll()">`;
+            return `<input type="text" class="q-text-input q-main" value="${d?d.text:''}" oninput="saveAll()">`;
         }
 
         function renderOptions(t, d) {
@@ -163,45 +193,42 @@
         function loadQuestions() { const s = localStorage.getItem('fifi_v18_final'); if(s) JSON.parse(s).forEach(q=>addQuestion(q)); }
         function clearAll() { if(confirm("مسح الكل؟")) { localStorage.clear(); location.reload(); } }
 
-        // --- وظائف السحابة المتكاملة ---
         async function saveToCloud() {
             const name = prompt("أدخل اسماً لهذا النموذج لحفظه سحابياً:");
             if (!name) return;
             try {
                 await db.ref('models/' + name).set({ teacher: "أ. عبدالعزيز الفيفي", data: collectData(), date: new Date().toLocaleString() });
-                alert("تم الحفظ في سحابة الفيفي بنجاح! ✅");
-            } catch (e) { alert("خطأ! تأكد من القواعد في Firebase."); }
+                const currentUrl = window.location.href.split('?')[0];
+                const studentLink = currentUrl + "?exam=" + encodeURIComponent(name);
+                prompt("تم الحفظ بنجاح! انسخ هذا الرابط وأرسله للطلاب ليدخلوا مباشرة:", studentLink);
+            } catch (e) { alert("خطأ في الحفظ!"); }
         }
 
         function loadFromCloud() {
             db.ref('models').once('value', s => {
                 const ms = s.val(); if(!ms) return alert("السحابة فارغة!");
                 const n = Object.keys(ms);
-                let msg = "اختر النموذج بكتابة اسمه تماماً:\n\n";
-                n.forEach((item, index) => { msg += `${index+1} - ${item} (${ms[item].date})\n`; });
+                let msg = "اختر النموذج:\n\n";
+                n.forEach((item, index) => { msg += `${index+1} - ${item}\n`; });
                 const choice = prompt(msg);
-                if (choice && ms[choice]) { 
-                    localStorage.setItem('fifi_v18_final', JSON.stringify(ms[choice].data)); 
-                    location.reload(); 
-                }
+                if (choice && ms[choice]) { localStorage.setItem('fifi_v18_final', JSON.stringify(ms[choice].data)); location.reload(); }
             });
         }
 
         async function deleteFromCloud() {
             db.ref('models').once('value', snapshot => {
                 const ms = snapshot.val();
-                if (!ms) return alert("لا توجد نماذج لحذفها!");
+                if (!ms) return alert("لا توجد نماذج!");
                 const names = Object.keys(ms);
-                const choice = prompt("اكتب اسم النموذج الذي تريد حذفه نهائياً من السحابة:\n\n" + names.join("\n"));
+                const choice = prompt("اكتب اسم النموذج لحذفه:\n\n" + names.join("\n"));
                 if (choice && ms[choice]) {
-                    if (confirm(`هل أنت متأكد من حذف نموذج "${choice}" نهائياً؟`)) {
-                        db.ref('models/' + choice).remove().then(() => alert("تم الحذف بنجاح! 🗑️"));
+                    if (confirm(`حذف نهائي لـ "${choice}"؟`)) {
+                        db.ref('models/' + choice).remove().then(() => alert("تم الحذف!"));
                     }
                 }
             });
         }
 
-        // --- وظائف التصدير الموثقة ---
         async function saveAsImages() {
             const cards = Array.from(document.querySelectorAll('.question-card'));
             for (let i = 0; i < cards.length; i += 3) {
@@ -230,7 +257,7 @@
                 });
                 document.body.appendChild(area);
                 await html2canvas(area, { scale: 2, useCORS: true }).then(c => {
-                    const l = document.createElement('a'); l.download = `اختبار_الفيفي_صورة_${Math.floor(i/3)+1}.png`; l.href = c.toDataURL(); l.click();
+                    const l = document.createElement('a'); l.download = `صورة_${Math.floor(i/3)+1}.png`; l.href = c.toDataURL(); l.click();
                 });
                 document.body.removeChild(area);
             }
@@ -261,7 +288,7 @@
                 content.appendChild(page);
                 if (i+3 < cards.length) { const pb = document.createElement('div'); pb.style.pageBreakAfter = "always"; content.appendChild(pb); }
             }
-            html2pdf().set({ margin: 0, filename: 'اختبار_الفيفي.pdf', image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(content).save();
+            html2pdf().set({ margin: 0, filename: 'اختبار.pdf', image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(content).save();
         }
     </script>
 </body>
